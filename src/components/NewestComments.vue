@@ -9,7 +9,7 @@
           >{{comment.Restaurant.name}}</router-link>
         </h4>
         <p>{{comment.text}}</p>by
-        <a href="#">{{comment.User.name}}</a>
+        <router-link :to="{name: 'user', params: {id: comment.UserId}}">{{comment.User.name}}</router-link>
         {{comment.createdAt | fromNow}}
         <hr />
       </div>
