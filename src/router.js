@@ -25,6 +25,16 @@ export default new Router({
       component: () => import('./views/SignUp.vue')
     },
     {
+      path: '/admin',
+      exact: true,
+      redirect: '/admin/restaurants'
+    },
+    {
+      path: '/admin/restaurants',
+      name: 'admin-restaurants',
+      component: () => import('./views/AdminRestaurants')
+    },
+    {
       path: '/restaurants',
       name: 'restaurants',
       component: Restaurants
