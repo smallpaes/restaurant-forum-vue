@@ -35,6 +35,16 @@ export default new Router({
       component: () => import('./views/AdminRestaurants')
     },
     {
+      path: '/admin/restaurants/new',
+      name: 'admin-restaurant-new',
+      component: () => import('./views/AdminRestaurantNew')
+    },
+    {
+      path: '/admin/restaurants/:id/edit',
+      name: 'admin-restaurant-edit',
+      component: () => import('./views/AdminRestaurantEdit')
+    },
+    {
       path: '/admin/restaurants/:id',
       name: 'admin-restaurant',
       component: () => import('./views/AdminRestaurant.vue')
