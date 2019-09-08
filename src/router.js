@@ -30,6 +30,11 @@ export default new Router({
       redirect: '/admin/restaurants'
     },
     {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('./views/AdminUsers')
+    },
+    {
       path: '/admin/categories',
       name: 'admin-categories',
       component: () => import('./views/AdminCategories')
