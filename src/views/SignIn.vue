@@ -32,7 +32,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button
+        :disabled="isProcessing"
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+      >Submit</button>
 
       <div class="text-center mb-3">
         <p>
@@ -46,22 +50,59 @@
 </template>
 
 <script>
+import authorizationAPI from "../apis/authorization";
+import { Toast } from "../utils/helpers";
+
 export default {
   name: "SignIn",
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      isProcessing: false
     };
   },
   methods: {
-    handleSubmit(e) {
-      const data = JSON.stringify({
-        email: this.email,
-        password: this.password
-      });
-      // 向後端驗證使用者登入資訊
-      console.log("data", data);
+    async handleSubmit(e) {
+      // validate email and password format
+      if (!this.email || !this.password) {
+        Toast.fire({
+          type: "warning",
+          title: "Please enter email and password"
+        });
+        return;
+      }
+
+      // change button disable status
+      this.isProcessing = true;
+
+      try {
+        // send login form to API
+        const { data, statusText } = await authorizationAPI.signIn({
+          email: this.email,
+          password: this.password
+        });
+
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        // save token to local storage
+        localStorage.setItem("token", data.token);
+        // redirect back to restaurant home page
+        this.$router.push("/restaurants");
+      } catch (error) {
+        // clear password field
+        this.password = "";
+        // change button disable status
+        this.isProcessing = false;
+        // show error message
+        Toast.fire({
+          type: "warning",
+          title: "Wrong email or password"
+        });
+        console.log("error", error);
+      }
     }
   }
 };
