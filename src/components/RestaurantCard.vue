@@ -20,13 +20,13 @@
           v-if="restaurant.isFavorited"
           type="button"
           class="btn btn-danger btn-border favorite mr-2"
-          @click.stop.prevent="deleteFavorite"
+          @click.stop.prevent="deleteFavorite(restaurant.id)"
         >移除最愛</button>
         <button
           v-else
           type="button"
           class="btn btn-primary btn-border favorite mr-2"
-          @click.stop.prevent="addFavorite"
+          @click.stop.prevent="addFavorite(restaurant.id)"
         >加到最愛</button>
         <button
           v-if="restaurant.isLiked"
@@ -46,6 +46,9 @@
 </template>
 
 <script>
+import usersAPI from "../apis/users";
+import { Toast } from "../utils/helpers";
+
 export default {
   props: {
     initialRestaurant: {
@@ -59,17 +62,49 @@ export default {
     };
   },
   methods: {
-    addFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: true
-      };
+    async addFavorite(restaurantId) {
+      try {
+        const { data, statusText } = await usersAPI.addFavorite({
+          restaurantId
+        });
+        // error handing
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update restaurant data
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: true
+        };
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title:
+            "Cannot add this restaurant to favorite, please try again later"
+        });
+      }
     },
-    deleteFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: false
-      };
+    async deleteFavorite(restaurantId) {
+      try {
+        const { data, statusText } = await usersAPI.deleteFavorite({
+          restaurantId
+        });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update restaurant data
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: false
+        };
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title:
+            "Cannot remove restaurant from favorite list, please try again later"
+        });
+      }
     },
     addLike() {
       this.restaurant = {
