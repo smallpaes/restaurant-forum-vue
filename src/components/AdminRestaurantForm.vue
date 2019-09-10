@@ -1,5 +1,5 @@
 <template>
-  <form @submit.stop.prevent="handleSubmit">
+  <form v-show="!isLoading" @submit.stop.prevent="handleSubmit">
     <div class="form-group">
       <label for="name">Name</label>
       <input
@@ -96,57 +96,17 @@
       />
     </div>
 
-    <button type="submit" class="btn btn-primary">送出</button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      :disabled="isProcessing"
+    >{{isProcessing ? "處理中" : "送出"}}</button>
   </form>
 </template>
 
 <script>
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 5,
-      name: "素食料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 6,
-      name: "美式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 7,
-      name: "複合式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    }
-  ]
-};
+import adminAPI from "../apis/admin";
+import { Toast } from "../utils/helpers";
 
 export default {
   props: {
@@ -161,6 +121,10 @@ export default {
         image: "",
         openingHours: ""
       })
+    },
+    isProcessing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -174,7 +138,9 @@ export default {
         image: "",
         openingHours: ""
       },
-      categories: []
+      categories: [],
+      // make sure category data has received before showing the form
+      isLoading: true
     };
   },
   created() {
@@ -185,8 +151,24 @@ export default {
     };
   },
   methods: {
-    fetchCategories() {
-      this.categories = dummyData.categories;
+    async fetchCategories() {
+      try {
+        const { data, statusText } = await adminAPI.categories.get();
+        // error handling
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        // update categories data
+        this.categories = data.categories;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+        Toast.fire({
+          type: "error",
+          title: "Cannot get restaurant categories, please try again later"
+        });
+      }
     },
     handleFileChange(e) {
       const files = e.target.files;
@@ -196,6 +178,22 @@ export default {
       this.restaurant.image = imageURL;
     },
     handleSubmit(e) {
+      // validate form input
+      if (!this.restaurant.name) {
+        Toast.fire({
+          type: "error",
+          title: "Please enter your name"
+        });
+        return;
+      }
+      if (!this.restaurant.categoryId) {
+        Toast.fire({
+          type: "error",
+          title: "Please choose a category"
+        });
+        return;
+      }
+
       const form = e.target;
       const formData = new FormData(form);
       this.$emit("after-submit", formData);
