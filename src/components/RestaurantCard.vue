@@ -32,13 +32,13 @@
           v-if="restaurant.isLiked"
           type="button"
           class="btn btn-danger like mr-2"
-          @click.stop.prevent="deleteLike"
+          @click.stop.prevent="deleteLike(restaurant.id)"
         >Unlike</button>
         <button
           v-else
           type="button"
           class="btn btn-primary like mr-2"
-          @click.stop.prevent="addLike"
+          @click.stop.prevent="addLike(restaurant.id)"
         >Like</button>
       </div>
     </div>
@@ -106,17 +106,45 @@ export default {
         });
       }
     },
-    addLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: true
-      };
+    async addLike(restaurantId) {
+      try {
+        const { data, statusText } = await usersAPI.addLike({ restaurantId });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update restaurant data
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: true
+        };
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot like this restaurant, please try again later"
+        });
+      }
     },
-    deleteLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: false
-      };
+    async deleteLike(restaurantId) {
+      try {
+        const { data, statusText } = await usersAPI.deleteLike({
+          restaurantId
+        });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update restaurant data
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: false
+        };
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot unlike this restaurant, please try again later"
+        });
+      }
     }
   }
 };
