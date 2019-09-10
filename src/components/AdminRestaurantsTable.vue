@@ -66,10 +66,25 @@ export default {
         });
       }
     },
-    deleteRestaurant(restaurantId) {
-      this.restaurants = this.restaurants.filter(
-        restaurant => restaurant.id !== restaurantId
-      );
+    async deleteRestaurant(restaurantId) {
+      try {
+        const { data, statusText } = await adminAPI.restaurants.delete({
+          restaurantId
+        });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update restaurants data
+        this.restaurants = this.restaurants.filter(
+          restaurant => restaurant.id !== restaurantId
+        );
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot delete this restaurant, please try again later"
+        });
+      }
     }
   }
 };
