@@ -38,7 +38,10 @@
 </template>
 
 <script>
+import adminAPI from "../apis/admin";
+import { Toast } from "../utils/helpers";
 import { placeholderImageCreator } from "../utils/mixins";
+import admin from "../apis/admin";
 
 const dummyData = {
   restaurant: {
@@ -83,21 +86,40 @@ export default {
     const { id: restaurantId } = this.$route.params;
     this.fetchRestaurant(restaurantId);
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchRestaurant(id);
+    next();
+  },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log("Restaurant Id", restaurantId);
-      const { restaurant } = dummyData;
-      this.restaurant = {
-        ...this.restaurant,
-        id: restaurant.id,
-        name: restaurant.name,
-        categoryName: restaurant.Category.name,
-        image: restaurant.image,
-        openingHours: restaurant.opening_hours,
-        tel: restaurant.tel,
-        address: restaurant.address,
-        description: restaurant.description
-      };
+    async fetchRestaurant(restaurantId) {
+      try {
+        const {
+          data: { restaurant },
+          statusText
+        } = await adminAPI.restaurants.getDetail({ restaurantId });
+        // error handling
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        // update restaurant data
+        this.restaurant = {
+          ...this.restaurant,
+          id: restaurant.id,
+          name: restaurant.name,
+          categoryName: restaurant.Category.name,
+          image: restaurant.image,
+          openingHours: restaurant.opening_hours,
+          tel: restaurant.tel,
+          address: restaurant.address,
+          description: restaurant.description
+        };
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot get restaurant info, please try again later"
+        });
+      }
     }
   }
 };
