@@ -58,7 +58,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button
+        :disabled="isProcessing"
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+      >Submit</button>
 
       <div class="text-center mb-3">
         <p>
@@ -72,6 +76,10 @@
 </template>
 
 <script>
+import authorizationAPI from "../apis/authorization";
+import { Toast } from "../utils/helpers";
+import authorization from "../apis/authorization";
+
 export default {
   name: "SignUp",
   data() {
@@ -79,18 +87,53 @@ export default {
       name: "",
       email: "",
       password: "",
-      passwordCheck: ""
+      passwordCheck: "",
+      isProcessing: false
     };
   },
   methods: {
-    handleSubmit(e) {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck
-      });
-      console.log("data", data);
+    async handleSubmit(e) {
+      // check empty input field
+      if (!this.name || !this.email || !this.password || !this.passwordCheck) {
+        Toast.fire({
+          type: "error",
+          title: "You have missed some fields, please enter all the info "
+        });
+        return;
+      }
+      // check if password matches passwordCheck
+      if (this.password !== this.passwordCheck) {
+        Toast.fire({
+          type: "error",
+          title: "Passwords do not match"
+        });
+        return;
+      }
+
+      // change isProcessing status
+      this.isProcessing = true;
+
+      try {
+        const { data, statusText } = await authorizationAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck
+        });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // redirect to login page
+        this.$router.push({ name: "sign-in" });
+      } catch (error) {
+        // change isProcessing status
+        this.isProcessing = false;
+        Toast.fire({
+          type: "error",
+          title: "Signup failed, please try again later"
+        });
+      }
     }
   }
 };
