@@ -5,10 +5,21 @@
     <form class="my-4">
       <div class="form-row">
         <div class="col-auto">
-          <input v-model="newCategoryName" type="text" class="form-control" placeholder="新增餐廳類別..." />
+          <input
+            v-model="newCategoryName"
+            type="text"
+            class="form-control"
+            placeholder="新增餐廳類別..."
+            required
+          />
         </div>
         <div class="col-auto">
-          <button @click.stop.prevent="createCategory" type="button" class="btn btn-primary">新增</button>
+          <button
+            @click.stop.prevent="createCategory"
+            :disabled="isProcessing"
+            type="button"
+            class="btn btn-primary"
+          >新增</button>
         </div>
       </div>
     </form>
@@ -38,17 +49,20 @@
             <button
               v-show="!category.isEditing"
               @click.stop.prevent="toggleIsEditing(category.id)"
+              :disabled="category.isProcessing"
               type="button"
               class="btn btn-link mr-2"
             >Edit</button>
             <button
               v-show="category.isEditing"
               @click.stop.prevent="updateCategory({categoryId: category.id, name: category.name})"
+              :disabled="category.isProcessing"
               type="button"
               class="btn btn-link mr-2"
             >Save</button>
             <button
               @click.stop.prevent="deleteCategory(category.id)"
+              :disabled="category.isProcessing"
               type="button"
               class="btn btn-link mr-2"
             >Delete</button>
@@ -60,55 +74,9 @@
 </template>
 
 <script>
+import adminAPI from "../apis/admin";
+import { Toast } from "../utils/helpers";
 import AdminNav from "../components/AdminNav";
-import uuid from "uuid/v4";
-
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 5,
-      name: "素食料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 6,
-      name: "美式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    {
-      id: 7,
-      name: "複合式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    }
-  ]
-};
 
 export default {
   components: {
@@ -117,33 +85,120 @@ export default {
   data() {
     return {
       newCategoryName: "",
-      categories: []
+      categories: [],
+      isProcessing: false
     };
   },
   created() {
     this.fetchCategories();
   },
   methods: {
-    fetchCategories() {
-      this.categories = dummyData.categories.map(category => ({
-        ...category,
-        isEditing: false
-      }));
+    async fetchCategories() {
+      try {
+        const { data, statusText } = await adminAPI.categories.get();
+        // error handling
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        // update categories data
+        this.categories = data.categories.map(category => ({
+          ...category,
+          isEditing: false,
+          isProcessing: false
+        }));
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot get categories info, please try again later"
+        });
+      }
     },
-    createCategory() {
-      // POST request to API
-      // Add new category to the list rendered
-      this.categories.push({
-        id: uuid(),
-        name: this.newCategoryName
-      });
-      // clear up input field
-      this.newCategoryName = "";
+    async createCategory() {
+      // check if input is empty
+      if (!this.newCategoryName) {
+        Toast.fire({
+          type: "error",
+          title: "Please enter a category name"
+        });
+        return;
+      }
+
+      // check if category already existes
+      if (
+        this.categories.filter(
+          category => category.name.trim() === this.newCategoryName.trim()
+        ).length > 0
+      ) {
+        Toast.fire({
+          type: "error",
+          title: "This category already exists"
+        });
+        return;
+      }
+
+      try {
+        // change isProcessing status
+        this.isProcessing = true;
+
+        const { data, statusText } = await adminAPI.categories.create({
+          name: this.newCategoryName.trim()
+        });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        // add category to the list
+        this.categories.push({
+          id: data.categoryId,
+          name: this.newCategoryName,
+          isEditing: false
+        });
+
+        // clear up input field
+        this.newCategoryName = "";
+
+        // change isProcessing status
+        this.isProcessing = false;
+      } catch (error) {
+        // change isProcessing status
+        this.isProcessing = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot add this category, please try again later"
+        });
+      }
     },
-    deleteCategory(cateogryId) {
-      this.categories = this.categories.filter(
-        category => category.id !== cateogryId
-      );
+    async deleteCategory(categoryId) {
+      try {
+        // change isProcessing status
+        this.toggleIsProcessing(categoryId);
+
+        const { data, statusText } = await adminAPI.categories.delete({
+          categoryId
+        });
+
+        // error handling
+        if ((statusText !== "OK", data.status !== "success")) {
+          throw new Error(statusText);
+        }
+
+        // update category data
+        this.categories = this.categories.filter(
+          category => category.id !== categoryId
+        );
+
+        // update isProcessing status
+        this.toggleIsProcessing(categoryId);
+      } catch (error) {
+        // update isProcessing status
+        this.toggleIsProcessing(categoryId);
+        Toast.fire({
+          type: "error",
+          title: "Cannot delete this category, please try again later"
+        });
+      }
     },
     toggleIsEditing(categoryId) {
       this.categories = this.categories.map(category => {
@@ -155,10 +210,64 @@ export default {
         };
       });
     },
-    updateCategory({ categoryId, name }) {
-      // PUT request to API
-      // update isEditing status
-      this.toggleIsEditing(categoryId);
+    toggleIsProcessing(categoryId) {
+      this.categories = this.categories.map(category => {
+        if (category.id !== categoryId) return category;
+        return {
+          ...category,
+          isProcessing: !category.isProcessing
+        };
+      });
+    },
+    async updateCategory({ categoryId, name }) {
+      // check if input is empty
+      if (!name) {
+        Toast.fire({
+          type: "error",
+          title: "Please enter the category name"
+        });
+        return;
+      }
+
+      // check if category already existes
+      if (
+        this.categories.filter(category => category.name.trim() === name.trim())
+          .length > 1
+      ) {
+        Toast.fire({
+          type: "error",
+          title: "This category already exists"
+        });
+        return;
+      }
+
+      try {
+        // update isProcessing status
+        this.toggleIsProcessing(categoryId);
+
+        const { data, statusText } = await adminAPI.categories.update({
+          categoryId,
+          name
+        });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update isEditing status
+        this.toggleIsEditing(categoryId);
+
+        // change isProcessing status
+        this.toggleIsProcessing(categoryId);
+      } catch (error) {
+        // change isProcessing status
+        this.toggleIsProcessing(categoryId);
+
+        Toast.fire({
+          type: "error",
+          title: "Cannot update this category, please try again"
+        });
+      }
     },
     handleCancel(categoryId) {
       this.categories = this.categories.map(category => {
