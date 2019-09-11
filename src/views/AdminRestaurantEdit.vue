@@ -1,33 +1,17 @@
 <template>
   <div class="container py-5">
-    <AdminRestaurantForm @after-submit="handleAfterSubmit" :initial-restaurant="restaurant" />
+    <AdminRestaurantForm
+      @after-submit="handleAfterSubmit"
+      :initial-restaurant="restaurant"
+      :is-processing="isProcessing"
+    />
   </div>
 </template>
 
 <script>
 import AdminRestaurantForm from "../components/AdminRestaurantForm";
-
-const dummyData = {
-  restaurant: {
-    id: 1,
-    name: "Tina Schamberger",
-    tel: "216.427.8386",
-    address: "899 Erica Alley",
-    opening_hours: "08:00",
-    description: "natus veritatis omnis",
-    image: "http://lorempixel.com/640/480",
-    viewCounts: 7,
-    createdAt: "2019-09-01T05:36:02.606Z",
-    updatedAt: "2019-09-06T05:05:20.378Z",
-    CategoryId: 1,
-    Category: {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    }
-  }
-};
+import adminAPI from "../apis/admin";
+import { Toast } from "../utils/helpers";
 
 export default {
   components: {
@@ -44,33 +28,71 @@ export default {
         description: "",
         image: "",
         openingHours: ""
-      }
+      },
+      isProcessing: false
     };
   },
   created() {
     const { id } = this.$route.params;
     this.fetchRestaurant(id);
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchRestaurant(id);
+    next();
+  },
   methods: {
-    handleAfterSubmit(formData) {
-      for (let [name, value] of formData.entries()) {
-        console.log(name + ":" + value);
+    async handleAfterSubmit(formData) {
+      try {
+        // change isProcessing status
+        this.isProcessing = true;
+        const { data, statusText } = await adminAPI.restaurants.update({
+          formData,
+          restaurantId: this.restaurant.id
+        });
+        // error handling
+        if ((statusText !== "OK", data.status !== "success")) {
+          throw new Error(statusText);
+        }
+        // redirect to amdin restaurant page
+        this.$router.push({ name: "admin-restaurants" });
+      } catch (error) {
+        // change isProcssing status
+        this.isProcessing = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot update this restaurant, please try again later"
+        });
       }
     },
-    fetchRestaurant(restaurantId) {
-      console.log("fetchRestaurant id:", restaurantId);
-      const { restaurant } = dummyData;
-      this.restaurant = {
-        ...this.restaurant,
-        id: restaurant.id,
-        name: restaurant.name,
-        categoryId: restaurant.CategoryId,
-        tel: restaurant.tel,
-        address: restaurant.address,
-        description: restaurant.description,
-        image: restaurant.image,
-        openingHours: restaurant.opening_hours
-      };
+    async fetchRestaurant(restaurantId) {
+      try {
+        const {
+          data: { restaurant },
+          statusText
+        } = await adminAPI.restaurants.getDetail({ restaurantId });
+        // error handling
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        // update restaurant detail data
+        this.restaurant = {
+          ...this.restaurant,
+          id: restaurant.id,
+          name: restaurant.name,
+          categoryId: restaurant.CategoryId,
+          tel: restaurant.tel,
+          address: restaurant.address,
+          description: restaurant.description,
+          image: restaurant.image,
+          openingHours: restaurant.opening_hours
+        };
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot get restaurant data, please try again later"
+        });
+      }
     }
   }
 };
