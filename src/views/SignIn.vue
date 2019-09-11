@@ -89,6 +89,10 @@ export default {
 
         // save token to local storage
         localStorage.setItem("token", data.token);
+
+        // send user data to Vuex
+        this.$store.commit("setCurrentUser", data.user);
+
         // redirect back to restaurant home page
         this.$router.push("/restaurants");
       } catch (error) {
