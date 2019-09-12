@@ -10,50 +10,8 @@
 
 <script>
 import RestaurantOverview from "../components/RestaurantOverview";
-
-const dummyData = {
-  restaurant: {
-    id: 4,
-    name: "Bud O'Connell",
-    tel: "1-804-671-7041 x06998",
-    address: "328 Batz Curve",
-    opening_hours: "08:00",
-    description: "voluptas",
-    image: "http://lorempixel.com/640/480",
-    viewCounts: 2,
-    createdAt: "2019-09-01T05:36:02.606Z",
-    updatedAt: "2019-09-01T05:38:12.343Z",
-    CategoryId: 4,
-    Comments: [],
-    Category: {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    FavoritedUsers: [
-      {
-        id: 1,
-        name: "root",
-        email: "root@example.com",
-        password:
-          "$2a$10$Z/IqhTucYmIFOF.CwcBR9.5pO3FiV4JE5e854j3zQXEg3vaYxbVP.",
-        isAdmin: true,
-        image: "http://lorempixel.com/200/200/people",
-        createdAt: "2019-09-01T05:36:02.343Z",
-        updatedAt: "2019-09-01T05:36:02.343Z",
-        Favorite: {
-          UserId: 1,
-          RestaurantId: 4,
-          createdAt: "2019-09-01T05:37:52.167Z",
-          updatedAt: "2019-09-01T05:37:52.167Z"
-        }
-      }
-    ]
-  },
-  commentCount: 0,
-  favoriteUser: 1
-};
+import restaurantAPI from "../apis/restaurants";
+import { Toast } from "../utils/helpers";
 
 export default {
   components: {
@@ -74,16 +32,35 @@ export default {
     const restaurantId = this.$route.params.id;
     this.fetchRestaurant(restaurantId);
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchRestaurant(id);
+    next();
+  },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log("Restaurant Id", restaurantId);
-      this.restaurant = {
-        id: dummyData.restaurant.id,
-        name: dummyData.restaurant.name,
-        categoryName: dummyData.restaurant.Category.name
-      };
-      this.commentCount = dummyData.commentCount;
-      this.favoriteUser = dummyData.favoriteUser;
+    async fetchRestaurant(restaurantId) {
+      try {
+        const { data, statusText } = await restaurantAPI.getDashboard({
+          restaurantId
+        });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update data
+        this.restaurant = {
+          id: data.restaurant.id,
+          name: data.restaurant.name,
+          categoryName: data.restaurant.Category.name
+        };
+        this.commentCount = data.commentCount;
+        this.favoriteUser = data.favoriteUser;
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot get restaurant info, please try again later"
+        });
+      }
     }
   }
 };
