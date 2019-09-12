@@ -31,11 +31,16 @@
             >Edit</router-link>
             <button
               v-else-if="isFollowed"
-              @click.stop.prevent="deleteFollowing"
+              @click.stop.prevent="deleteFollowing(profile.id)"
               type="button"
               class="btn btn-danger"
             >取消追蹤</button>
-            <button v-else type="button" @click.stop.prevent="addFollowing" class="btn btn-info">追蹤</button>
+            <button
+              v-else
+              type="button"
+              @click.stop.prevent="addFollowing(profile.id)"
+              class="btn btn-info"
+            >追蹤</button>
           </p>
         </div>
       </div>
@@ -45,6 +50,8 @@
 
 <script>
 import { placeholderImageCreator } from "../utils/mixins";
+import userAPI from "../apis/users";
+import { Toast } from "../utils/helpers";
 
 export default {
   mixins: [placeholderImageCreator],
@@ -67,12 +74,43 @@ export default {
       isFollowed: this.initialIsFollowed
     };
   },
+  watch: {
+    initialIsFollowed(isFollowed) {
+      this.isFollowed = isFollowed;
+    }
+  },
   methods: {
-    addFollowing() {
-      this.isFollowed = true;
+    async addFollowing(userId) {
+      try {
+        const { data, statusText } = await userAPI.addFollowing({ userId });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        this.isFollowed = true;
+        this.$emit("handle-after-following");
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot follow this user, please try again later"
+        });
+      }
     },
-    deleteFollowing() {
-      this.isFollowed = false;
+    async deleteFollowing(userId) {
+      try {
+        const { data, statusText } = await userAPI.removeFollowing({ userId });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        this.isFollowed = false;
+        this.$emit("handle-after-unfollowing");
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot unfollow this user, please try again later"
+        });
+      }
     }
   }
 };
