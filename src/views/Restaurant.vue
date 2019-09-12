@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5">
+  <div v-show="!isLoading" class="container py-5">
     <h1>餐廳描述頁</h1>
     <!-- 餐廳資訊頁 RestaurantDetail -->
     <RestaurantDetail :initial-restaurant="restaurant" />
@@ -37,7 +37,8 @@ export default {
         isFavorited: false,
         isLiked: false
       },
-      restaurantComments: []
+      restaurantComments: [],
+      isLoading: true
     };
   },
   created() {
@@ -78,7 +79,12 @@ export default {
           isLiked: data.restaurant.isLiked
         };
         this.restaurantComments = data.restaurant.Comments;
+
+        // update isLoading status
+        this.isLoading = false;
       } catch (error) {
+        // update isLoading status
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot get restaurant info, please try again later"
