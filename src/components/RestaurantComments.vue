@@ -7,11 +7,12 @@
         <button
           v-if="currentUser.isAdmin"
           @click.stop.prevent="handleDeleteButtonClick(comment.id)"
+          :disabled="isProcessing"
           type="button"
           class="btn btn-danger float-right"
         >Delete</button>
         <h3>
-          <router-link :to="{name: 'user', params: {id: comment.UserId}}">{{comment.User.name}}</router-link>
+          <router-link :to="{name: 'user', params: {id: comment.User.id}}">{{comment.User.name}}</router-link>
         </h3>
         <p>{{comment.text}}</p>
         <footer class="blockquote-footer">{{comment.createdAt | fromNow}}</footer>
@@ -23,15 +24,9 @@
 
 <script>
 import { fromNowFilter } from "../utils/mixins";
-
-const dummyUser = {
-  currentUser: {
-    id: "1",
-    name: "管理者",
-    email: "root@example.com",
-    isAdmin: true
-  }
-};
+import commentAPI from "../apis/comment";
+import { Toast } from "../utils/helpers";
+import { mapState } from "vuex";
 
 export default {
   mixins: [fromNowFilter],
@@ -43,13 +38,39 @@ export default {
   },
   data() {
     return {
-      currentUser: dummyUser.currentUser
+      isProcessing: false
     };
   },
+  computed: {
+    ...mapState(["currentUser"])
+  },
   methods: {
-    handleDeleteButtonClick(commentId) {
-      console.log("handleDeleteButtonClick", commentId);
-      this.$emit("after-delete-comment", commentId);
+    async handleDeleteButtonClick(commentId) {
+      try {
+        // update isProcessing status
+        this.isProcessing = true;
+
+        const { data, statusText } = await commentAPI.deleteComment({
+          commentId
+        });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        this.$emit("after-delete-comment", commentId);
+
+        // update isProcessing status
+        this.isProcessing = false;
+      } catch (error) {
+        // update isProcessing status
+        this.isProcessing = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot delete this comment, please try again later"
+        });
+      }
     }
   }
 };

@@ -7,7 +7,7 @@
     <div class="col-lg-4">
       <img
         class="img-responsive center-block"
-        src="https://loremflickr.com/320/240/food,dessert,restaurant/"
+        :src="restaurant.image | placeholderImage"
         style="width: 250px;margin-bottom: 25px;"
       />
       <div class="contact-info-wrap">
@@ -62,7 +62,10 @@
 </template>
 
 <script>
+import { placeholderImageCreator } from "../utils/mixins";
+
 export default {
+  mixins: [placeholderImageCreator],
   props: {
     initialRestaurant: {
       type: Object,
@@ -73,6 +76,14 @@ export default {
     return {
       restaurant: this.initialRestaurant
     };
+  },
+  watch: {
+    initialRestaurant(restaurant) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...restaurant
+      };
+    }
   },
   methods: {
     addFavorite() {

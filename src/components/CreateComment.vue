@@ -2,16 +2,17 @@
   <form @submit.stop.prevent="handleSubmit">
     <div class="form-group">
       <label for="text">留下評論：</label>
-      <textarea v-model="text" class="form-control" rows="3" name="text" />
+      <textarea v-model="text" :disabled="isProcessing" class="form-control" rows="3" name="text" />
     </div>
     <div class="text-right">
-      <button type="submit" class="btn btn-primary mr-0">Submit</button>
+      <button :disabled="isProcessing" type="submit" class="btn btn-primary mr-0">Submit</button>
     </div>
   </form>
 </template>
 
 <script>
-import uuid from "uuid/v4";
+import commentAPI from "../apis/comment";
+import { Toast } from "../utils/helpers";
 
 export default {
   props: {
@@ -22,18 +23,54 @@ export default {
   },
   data() {
     return {
-      text: ""
+      text: "",
+      isProcessing: false
     };
   },
   methods: {
-    handleSubmit() {
-      // POST to API
-      this.$emit("after-create-comment", {
-        commentId: uuid(),
-        restaurantId: this.restaurantId,
-        text: this.text
-      });
-      this.text = "";
+    async handleSubmit() {
+      // check if input is empty
+      if (!this.text) {
+        Toast.fire({
+          type: "error",
+          title: "Please submit a comment with content!"
+        });
+        return;
+      }
+
+      try {
+        // update isProcessing status
+        this.isProcessing = true;
+
+        const { data, statusText } = await commentAPI.postComment({
+          text: this.text,
+          restaurantId: this.restaurantId
+        });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        this.$emit("after-create-comment", {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text
+        });
+
+        this.text = "";
+
+        // update isProcessing status
+        this.isProcessing = false;
+      } catch {
+        // update isProcessing status
+        this.isProcessing = false;
+
+        Toast.fire({
+          type: "error",
+          title: "Cannot add the comment, please try again later!"
+        });
+      }
     }
   }
 };

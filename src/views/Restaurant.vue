@@ -15,99 +15,12 @@
 </template>
 
 <script>
+import restaurantAPI from "../apis/restaurants";
+import { Toast } from "../utils/helpers";
 import RestaurantDetail from "../components/RestaurantDetail";
 import RestaurantComments from "../components/RestaurantComments";
 import CreateComment from "../components/CreateComment";
-
-const dummyData = {
-  restaurant: {
-    id: 50,
-    name: "Vergie Durgan",
-    tel: "(197) 229-4586 x111",
-    address: "730 Keeling Fork",
-    opening_hours: "08:00",
-    description: "soluta",
-    image: "http://lorempixel.com/640/480",
-    viewCounts: 8,
-    createdAt: "2019-09-01T05:36:02.619Z",
-    updatedAt: "2019-09-06T05:55:54.803Z",
-    CategoryId: 1,
-    Category: {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    },
-    Comments: [
-      {
-        id: 2,
-        text: "good!",
-        UserId: 1,
-        RestaurantId: 50,
-        createdAt: "2019-09-01T08:36:30.536Z",
-        updatedAt: "2019-09-01T08:36:30.536Z",
-        User: {
-          id: 1,
-          name: "root",
-          email: "root@example.com",
-          password:
-            "$2a$10$Z/IqhTucYmIFOF.CwcBR9.5pO3FiV4JE5e854j3zQXEg3vaYxbVP.",
-          isAdmin: true,
-          image: "http://lorempixel.com/200/200/people",
-          createdAt: "2019-09-01T05:36:02.343Z",
-          updatedAt: "2019-09-01T05:36:02.343Z"
-        }
-      },
-      {
-        id: 3,
-        text: "Yum!\r\n",
-        UserId: 1,
-        RestaurantId: 50,
-        createdAt: "2019-09-01T08:36:48.736Z",
-        updatedAt: "2019-09-01T08:36:48.736Z",
-        User: {
-          id: 1,
-          name: "root",
-          email: "root@example.com",
-          password:
-            "$2a$10$Z/IqhTucYmIFOF.CwcBR9.5pO3FiV4JE5e854j3zQXEg3vaYxbVP.",
-          isAdmin: true,
-          image: "http://lorempixel.com/200/200/people",
-          createdAt: "2019-09-01T05:36:02.343Z",
-          updatedAt: "2019-09-01T05:36:02.343Z"
-        }
-      }
-    ],
-    FavoritedUsers: [
-      {
-        id: 1,
-        name: "root",
-        email: "root@example.com",
-        password:
-          "$2a$10$Z/IqhTucYmIFOF.CwcBR9.5pO3FiV4JE5e854j3zQXEg3vaYxbVP.",
-        isAdmin: true,
-        image: "http://lorempixel.com/200/200/people",
-        createdAt: "2019-09-01T05:36:02.343Z",
-        updatedAt: "2019-09-01T05:36:02.343Z",
-        Favorite: {
-          UserId: 1,
-          RestaurantId: 50,
-          createdAt: "2019-09-01T08:36:23.004Z",
-          updatedAt: "2019-09-01T08:36:23.004Z"
-        }
-      }
-    ],
-    LikedUsers: [],
-    isFavorited: true,
-    isLiked: false
-  },
-  currentUser: {
-    id: "1",
-    name: "管理者",
-    email: "root@example.com",
-    isAdmin: true
-  }
-};
+import { mapState } from "vuex";
 
 export default {
   data() {
@@ -124,30 +37,53 @@ export default {
         isFavorited: false,
         isLiked: false
       },
-      restaurantComments: [],
-      currentUser: dummyData.currentUser
+      restaurantComments: []
     };
   },
   created() {
     const { id: restaurantId } = this.$route.params;
     this.fetchRestaurant(restaurantId);
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id: restaurantId } = to.params;
+    this.fetchRestaurant(restaurantId);
+    next();
+  },
+  computed: {
+    ...mapState(["currentUser"])
+  },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log("fetchRestaurant id: ", restaurantId);
-      this.restaurant = {
-        id: dummyData.restaurant.id,
-        name: dummyData.restaurant.name,
-        tel: dummyData.restaurant.tel,
-        address: dummyData.restaurant.address,
-        openingHours: dummyData.restaurant.opening_hours,
-        description: dummyData.restaurant.description,
-        image: dummyData.restaurant.image,
-        categoryName: dummyData.restaurant.Category.name,
-        isFavorited: dummyData.restaurant.isFavorited,
-        isLiked: dummyData.restaurant.isLiked
-      };
-      this.restaurantComments = dummyData.restaurant.Comments;
+    async fetchRestaurant(restaurantId) {
+      try {
+        const { data, statusText } = await restaurantAPI.getRestaurant({
+          restaurantId
+        });
+
+        // error handling
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+
+        // update restaurant data
+        this.restaurant = {
+          id: data.restaurant.id,
+          name: data.restaurant.name,
+          tel: data.restaurant.tel,
+          address: data.restaurant.address,
+          openingHours: data.restaurant.opening_hours,
+          description: data.restaurant.description,
+          image: data.restaurant.image,
+          categoryName: data.restaurant.Category.name,
+          isFavorited: data.restaurant.isFavorited,
+          isLiked: data.restaurant.isLiked
+        };
+        this.restaurantComments = data.restaurant.Comments;
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot get restaurant info, please try again later"
+        });
+      }
     },
     afterDeleteComment(commentId) {
       // filter 未被刪除的評論
