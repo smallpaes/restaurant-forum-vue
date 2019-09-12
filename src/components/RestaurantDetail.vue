@@ -35,25 +35,29 @@
       >Dashboard</router-link>
       <button
         v-if="restaurant.isFavorited"
-        @click.stop.prevent="deleteFavorite"
+        @click.stop.prevent="deleteFavorite(restaurant.id)"
+        :disabled="isProcessingFavorite"
         type="button"
         class="btn btn-danger btn-border mr-2"
       >移除最愛</button>
       <button
         v-else
-        @click.stop.prevent="addFavorite"
+        @click.stop.prevent="addFavorite(restaurant.id)"
+        :disabled="isProcessingFavorite"
         type="button"
         class="btn btn-primary btn-border mr-2"
       >加到最愛</button>
       <button
         v-if="restaurant.isLiked"
-        @click.stop.prevent="deleteLike"
+        @click.stop.prevent="deleteLike(restaurant.id)"
+        :disabled="isProcessingLike"
         type="button"
         class="btn btn-danger like mr-2"
       >Unlike</button>
       <button
         v-else
-        @click.stop.prevent="addLike"
+        @click.stop.prevent="addLike(restaurant.id)"
+        :disabled="isProcessingLike"
         type="button"
         class="btn btn-primary like mr-2"
       >Like</button>
@@ -63,6 +67,8 @@
 
 <script>
 import { placeholderImageCreator } from "../utils/mixins";
+import userAPI from "../apis/users";
+import { Toast } from "../utils/helpers";
 
 export default {
   mixins: [placeholderImageCreator],
@@ -74,7 +80,9 @@ export default {
   },
   data() {
     return {
-      restaurant: this.initialRestaurant
+      restaurant: this.initialRestaurant,
+      isProcessingLike: false,
+      isProcessingFavorite: false
     };
   },
   watch: {
@@ -86,29 +94,119 @@ export default {
     }
   },
   methods: {
-    addFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: true
-      };
+    async addFavorite(restaurantId) {
+      try {
+        // updating isProcessingLike status
+        this.isProcessingFavorite = true;
+
+        const { data, statusText } = await userAPI.addFavorite({
+          restaurantId
+        });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: true
+        };
+
+        // updating isProcessingLike status
+        this.isProcessingFavorite = false;
+      } catch (error) {
+        // updating isProcessingLike status
+        this.isProcessingFavorite = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot add to favorite, please try again later!"
+        });
+      }
     },
-    deleteFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: false
-      };
+    async deleteFavorite(restaurantId) {
+      try {
+        // updating isProcessingLike status
+        this.isProcessingFavorite = true;
+
+        const { data, statusText } = await userAPI.deleteFavorite({
+          restaurantId
+        });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: false
+        };
+
+        // updating isProcessingLike status
+        this.isProcessingFavorite = false;
+      } catch (error) {
+        // updating isProcessingLike status
+        this.isProcessingFavorite = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot remove from favorite, please try again later!"
+        });
+      }
     },
-    addLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: true
-      };
+    async addLike(restaurantId) {
+      try {
+        // updating isProcessingLike status
+        this.isProcessingLike = true;
+
+        const { data, statusText } = await userAPI.addLike({ restaurantId });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: true
+        };
+
+        // updating isProcessingLike status
+        this.isProcessingLike = false;
+      } catch (error) {
+        // updating isProcessingLike status
+        this.isProcessingLike = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot like the restaurant, please try again later!"
+        });
+      }
     },
-    deleteLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: false
-      };
+    async deleteLike(restaurantId) {
+      try {
+        // updating isProcessingLike status
+        this.isProcessingLike = true;
+
+        const { data, statusText } = await userAPI.deleteLike({ restaurantId });
+
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: false
+        };
+
+        // updating isProcessingLike status
+        this.isProcessingLike = false;
+      } catch (error) {
+        // updating isProcessingLike status
+        this.isProcessingLike = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot unlike the restaurant, please try again later!"
+        });
+      }
     }
   }
 };
