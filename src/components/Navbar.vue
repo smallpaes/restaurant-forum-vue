@@ -2,36 +2,50 @@
   <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
     <router-link class="navbar-brand" to="/">餐廳評論網</router-link>
 
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon" />
-    </button>
+    <template v-if="isAuthenticated">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon" />
+      </button>
+    </template>
 
     <div id="navbarSupportedContent" class="navbar-collapse collapse">
-      <div class="ml-auto d-flex align-items-center">
-        <!-- is user is admin -->
-        <router-link v-if="currentUser.isAdmin" to="/admin" class="text-white mr-3">管理員後台</router-link>
-
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <!-- if user is admin -->
+          <router-link v-if="currentUser.isAdmin" to="/admin" class="text-white mr-3 nav-link">管理員後台</router-link>
+        </li>
         <!-- is user is login -->
         <template v-if="isAuthenticated">
-          <router-link
-            :to="{name: 'user', params: {id: currentUser.id}}"
-            class="text-white mr-3"
-          >{{currentUser.name || '使用者'}} 您好</router-link>
-          <button
-            @click.stop.prevent="logout"
-            type="button"
-            class="btn btn-sm btn-outline-success my-2 my-sm-0"
-          >登出</button>
+          <li class="nav-item">
+            <router-link
+              :to="{name: 'user', params: {id: currentUser.id}}"
+              class="text-white mr-3 nav-link"
+            >{{currentUser.name || '使用者'}} 您好</router-link>
+          </li>
+          <li class="nav-item d-none d-lg-inline">
+            <button
+              @click.stop.prevent="logout"
+              type="button"
+              class="btn btn-sm btn-outline-success my-2 my-sm-0 nav-link"
+            >登出</button>
+          </li>
+          <li class="nav-item d-lg-none">
+            <button
+              @click.stop.prevent="logout"
+              type="button"
+              class="btn btn-link nav-link text-white"
+            >登出</button>
+          </li>
         </template>
-      </div>
+      </ul>
     </div>
   </nav>
 </template>
