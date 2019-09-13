@@ -25,7 +25,11 @@
             :to="{name: 'user', params: {id: currentUser.id}}"
             class="text-white mr-3"
           >{{currentUser.name || '使用者'}} 您好</router-link>
-          <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0">登出</button>
+          <button
+            @click.stop.prevent="logout"
+            type="button"
+            class="btn btn-sm btn-outline-success my-2 my-sm-0"
+          >登出</button>
         </template>
       </div>
     </div>
@@ -39,6 +43,12 @@ export default {
   name: "Navbar",
   computed: {
     ...mapState(["currentUser", "isAuthenticated"])
+  },
+  methods: {
+    logout() {
+      this.$store.commit("revokeAuthentication");
+      this.$router.push("/signin");
+    }
   }
 };
 </script>
