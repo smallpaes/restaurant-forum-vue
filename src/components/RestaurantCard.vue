@@ -1,45 +1,47 @@
 <template>
   <div class="col-md-6 col-lg-4">
-    <div class="card mb-4">
-      <img
-        class="card-img-top"
-        :src="restaurant.image"
-        alt="Card image cap"
-        width="286px"
-        height="180px"
-      />
+    <div class="card mb-4 border-0 shadow-sm">
+      <img class="card-img-top" :src="restaurant.image" alt="Card image cap" />
       <div class="card-body">
-        <p class="card-text title-wrap">
+        <h5 class="card-title m-0">
           <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">{{restaurant.name}}</router-link>
-        </p>
-        <span class="badge badge-secondary">{{restaurant.Category.name}}</span>
-        <p class="card-text text-truncate">{{restaurant.description}}</p>
-      </div>
-      <div class="card-footer">
-        <button
-          v-if="restaurant.isFavorited"
-          type="button"
-          class="btn btn-danger btn-border favorite mr-2"
-          @click.stop.prevent="deleteFavorite(restaurant.id)"
-        >移除最愛</button>
-        <button
-          v-else
-          type="button"
-          class="btn btn-primary btn-border favorite mr-2"
-          @click.stop.prevent="addFavorite(restaurant.id)"
-        >加到最愛</button>
-        <button
-          v-if="restaurant.isLiked"
-          type="button"
-          class="btn btn-danger like mr-2"
-          @click.stop.prevent="deleteLike(restaurant.id)"
-        >Unlike</button>
-        <button
-          v-else
-          type="button"
-          class="btn btn-primary like mr-2"
-          @click.stop.prevent="addLike(restaurant.id)"
-        >Like</button>
+        </h5>
+        <div class="d-flex align-items-center mt-2 mb-3">
+          <span class="badge mr-2">{{restaurant.Category.name}}</span>
+          <button
+            v-if="restaurant.isFavorited"
+            type="button"
+            class="btn p-0 mx-1"
+            @click.stop.prevent="deleteFavorite(restaurant.id)"
+          >
+            <i class="fas fa-bookmark text-warning"></i>
+          </button>
+          <button
+            v-else
+            type="button"
+            class="btn p-0 mx-1 favorite-btn"
+            @click.stop.prevent="addFavorite(restaurant.id)"
+          >
+            <i class="far fa-bookmark"></i>
+          </button>
+          <button
+            v-if="restaurant.isLiked"
+            type="button"
+            class="btn p-0 mx-1"
+            @click.stop.prevent="deleteLike(restaurant.id)"
+          >
+            <i class="fas fa-heart text-danger"></i>
+          </button>
+          <button
+            v-else
+            type="button"
+            class="btn p-0 mx-1 like-btn"
+            @click.stop.prevent="addLike(restaurant.id)"
+          >
+            <i class="far fa-heart"></i>
+          </button>
+        </div>
+        <p class="card-text card-description">{{restaurant.description}}</p>
       </div>
     </div>
   </div>
@@ -149,3 +151,41 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.card-title a {
+  color: rgb(100, 100, 100);
+  font-weight: 600;
+}
+
+.card-title a:hover {
+  color: rgb(73, 73, 73);
+}
+
+.card-description {
+  color: rgb(100, 100, 100);
+}
+
+/*Like & Favorite*/
+.like-btn,
+.favorite-btn {
+  color: rgb(100, 100, 100);
+}
+
+.like-btn:hover,
+.favorite-btn:hover {
+  color: rgb(73, 65, 65);
+}
+
+.btn.focus,
+.btn:focus {
+  box-shadow: none;
+}
+
+/*sm size*/
+@media screen and (min-width: 576px) {
+  .card-body .card-text:last-of-type {
+    min-height: 48px;
+  }
+}
+</style>

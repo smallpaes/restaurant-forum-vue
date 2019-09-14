@@ -1,16 +1,53 @@
 <template>
-  <div class="row">
+  <div class="row shadow-sm rounded-lg">
     <div class="col-md-12 mb-3">
       <h1>{{restaurant.name}}</h1>
       <p class="badge badge-secondary mt-1 mb-3">{{restaurant.categoryName}}</p>
     </div>
-    <div class="col-lg-4">
-      <img
-        class="img-responsive center-block"
-        :src="restaurant.image | placeholderImage"
-        style="width: 250px;margin-bottom: 25px;"
-      />
-      <div class="contact-info-wrap">
+    <div class="col-md-4">
+      <div class="restaurant-image position-relative">
+        <img class="img-fluid rounded" :src="restaurant.image | placeholderImage" />
+        <div class="save-like-buttons d-flex">
+          <button
+            v-if="restaurant.isFavorited"
+            @click.stop.prevent="deleteFavorite(restaurant.id)"
+            :disabled="isProcessingFavorite"
+            type="button"
+            class="btn favorite-btn"
+          >
+            <i class="fas fa-bookmark text-warning"></i>
+          </button>
+          <button
+            v-else
+            @click.stop.prevent="addFavorite(restaurant.id)"
+            :disabled="isProcessingFavorite"
+            type="button"
+            class="btn favorite-btn"
+          >
+            <i class="far fa-bookmark"></i>
+          </button>
+          <button
+            v-if="restaurant.isLiked"
+            @click.stop.prevent="deleteLike(restaurant.id)"
+            :disabled="isProcessingLike"
+            type="button"
+            class="btn like-btn"
+          >
+            <i class="fas fa-heart text-danger"></i>
+          </button>
+          <button
+            v-else
+            @click.stop.prevent="addLike(restaurant.id)"
+            :disabled="isProcessingLike"
+            type="button"
+            class="btn like-btn"
+          >
+            <i class="far fa-heart"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="contact-info-wrap mt-3">
         <ul class="list-unstyled">
           <li>
             <strong>Opening Hour:</strong>
@@ -27,40 +64,12 @@
         </ul>
       </div>
     </div>
-    <div class="col-lg-8">
+    <div class="col-md-8 d-flex flex-column justify-content-around my-2">
       <p>{{ restaurant.description }}</p>
       <router-link
         :to="{name: 'restaurant-dashboard', params: {id: restaurant.id}}"
-        class="btn btn-primary btn-border mr-2"
+        class="btn red-btn mr-2 align-self-end"
       >Dashboard</router-link>
-      <button
-        v-if="restaurant.isFavorited"
-        @click.stop.prevent="deleteFavorite(restaurant.id)"
-        :disabled="isProcessingFavorite"
-        type="button"
-        class="btn btn-danger btn-border mr-2"
-      >移除最愛</button>
-      <button
-        v-else
-        @click.stop.prevent="addFavorite(restaurant.id)"
-        :disabled="isProcessingFavorite"
-        type="button"
-        class="btn btn-primary btn-border mr-2"
-      >加到最愛</button>
-      <button
-        v-if="restaurant.isLiked"
-        @click.stop.prevent="deleteLike(restaurant.id)"
-        :disabled="isProcessingLike"
-        type="button"
-        class="btn btn-danger like mr-2"
-      >Unlike</button>
-      <button
-        v-else
-        @click.stop.prevent="addLike(restaurant.id)"
-        :disabled="isProcessingLike"
-        type="button"
-        class="btn btn-primary like mr-2"
-      >Like</button>
     </div>
   </div>
 </template>
@@ -211,3 +220,44 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.save-like-buttons {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.6rem;
+}
+
+.save-like-buttons button {
+  margin: 0 0.1rem;
+  background: transparent;
+  border-radius: 50%;
+  background: rgba(70, 70, 70, 0.6);
+  -webkit-box-shadow: 0.5px 0.5px 0.5px 0px rgba(107, 107, 107, 1);
+  -moz-box-shadow: 0.5px 0.5px 0.5px 0px rgba(107, 107, 107, 1);
+  box-shadow: 0.5px 0.5px 0.5px 0px rgba(107, 107, 107, 1);
+}
+
+.favorite-btn {
+  padding: 0rem 0.4rem;
+}
+
+.like-btn {
+  padding: 0rem 0.25rem;
+}
+
+.like-btn i,
+.favorite-btn i {
+  color: rgb(206, 206, 206);
+}
+
+.like-btn:hover i,
+.favorite-btn:hover i {
+  color: rgb(255, 255, 255);
+}
+
+.btn.focus,
+.btn:focus {
+  box-shadow: none;
+}
+</style>

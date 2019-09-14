@@ -10,24 +10,24 @@
     </thead>
     <tbody>
       <tr v-for="restaurant in restaurants" :key="restaurant.id">
-        <th scope="row">{{ restaurant.id }}</th>
-        <td>{{ restaurant.Category && restaurant.Category.name }}</td>
-        <td>{{ restaurant.name }}</td>
-        <td class="d-flex justify-content-between">
+        <th scope="row" class="pt-3">{{ restaurant.id }}</th>
+        <td class="pt-3">{{ restaurant.Category && restaurant.Category.name }}</td>
+        <td class="pt-3">{{ restaurant.name }}</td>
+        <td class="d-flex justify-content-start actions">
           <router-link
             :to="{name: 'admin-restaurant', params: {id: restaurant.id}}"
-            class="btn btn-link"
+            class="btn btn-link pr-4"
           >Show</router-link>
 
           <router-link
             :to="{name: 'admin-restaurant-edit', params: {id: restaurant.id}}"
-            class="btn btn-link"
+            class="btn btn-link pr-4"
           >Edit</router-link>
 
           <button
             @click.stop.prevent="deleteRestaurant(restaurant.id)"
             type="button"
-            class="btn btn-link"
+            class="btn btn-link pr-4"
           >Delete</button>
         </td>
       </tr>

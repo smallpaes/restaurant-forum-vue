@@ -1,30 +1,32 @@
 <template>
-  <div class="container py-5">
+  <div class="container py-3">
     <NavTabs />
-    <h1 class="mt-5">美食達人</h1>
-    <hr />
-
-    <div class="row text-center">
+    <div class="row text-center mt-3">
       <!--User Card-->
-      <!-- <UserCard v-for="user in users" :key="user.id" :initial-user="user" /> -->
-      <div v-for="user in users" :key="user.id" class="col-6 col-md-3">
-        <a href="#">
-          <img :src="user.image" width="140px" height="140px" />
-        </a>
-        <h2>{{user.name}}</h2>
-        <span class="badge badge-secondary">追蹤人數：{{user.FollowerCount}}</span>
-        <p class="mt-3">
+      <div v-for="user in users" :key="user.id" class="col-12 col-md-6 col-lg-3 my-3">
+        <router-link :to="{name: 'user', params: {id: user.id}}">
+          <img :src="user.image | placeholderImage" class="rounded-circle img-thumbnail avatar" />
+        </router-link>
+        <h4 class="topic mb-0 mt-2">{{user.name}}</h4>
+        <p class="text-secondary d-block follower">追蹤人數：{{user.FollowerCount}}</p>
+        <p class="mt-2">
+          <router-link
+            v-if="currentUser.id === user.id"
+            :to="{name: 'user-edit', params: {id: user.id}}"
+            role="button"
+            class="btn red-btn btn-sm mt-0"
+          >編輯</router-link>
           <button
-            v-if="user.isFollowed"
+            v-else-if="user.isFollowed"
             @click.stop.prevent="unfollow(user.id)"
             type="button"
-            class="btn btn-danger"
+            class="btn red-btn btn-sm mt-0"
           >取消追蹤</button>
           <button
             v-else
             @click.stop.prevent="follow(user.id)"
             type="button"
-            class="btn btn-primary"
+            class="btn red-btn btn-sm mt-0"
           >追蹤</button>
         </p>
       </div>
@@ -36,8 +38,14 @@
 import userAPI from "../apis/users";
 import { Toast } from "../utils/helpers";
 import NavTabs from "../components/NavTabs";
+import { placeholderImageCreator } from "../utils/mixins";
+import { mapState } from "vuex";
 
 export default {
+  mixins: [placeholderImageCreator],
+  computed: {
+    ...mapState(["currentUser"])
+  },
   data() {
     return {
       users: []
@@ -123,3 +131,31 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.avatar {
+  width: 30%;
+}
+
+.btn-group-sm > .btn,
+.btn-sm {
+  border-radius: 0.2rem;
+  padding: 0.1rem 0.8rem;
+}
+
+/*md size*/
+@media screen and (min-width: 768px) {
+  /*Top User Section*/
+  .avatar {
+    width: 40%;
+  }
+}
+
+/*lg size*/
+@media screen and (min-width: 992px) {
+  /*Top User Section*/
+  .avatar {
+    width: 55%;
+  }
+}
+</style>

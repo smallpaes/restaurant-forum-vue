@@ -11,6 +11,17 @@ const fromNowFilter = {
   }
 }
 
+const shortenContentFilter = {
+  filters: {
+    shortenContent(content) {
+      if (content.length <= 30) {
+        return content
+      }
+      return `${content.substring(0, 30)}...`
+    }
+  }
+}
+
 const placeholderImageCreator = {
   filters: {
     placeholderImage(link) {
@@ -19,4 +30,4 @@ const placeholderImageCreator = {
   }
 }
 
-export { fromNowFilter, placeholderImageCreator }
+export { fromNowFilter, placeholderImageCreator, shortenContentFilter }

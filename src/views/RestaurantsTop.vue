@@ -1,46 +1,47 @@
 <template>
-  <div class="container py-5">
+  <div class="container py-3">
     <NavTabs />
-    <h1 class="mt-5">人氣餐廳</h1>
-    <hr />
     <!--Show Top Restaurants-->
-    <div
-      v-for="restaurant in restaurants"
-      :key="restaurant.id"
-      class="card mb-3"
-      style="max-width: 540px;margin: auto;"
-    >
+    <div v-for="restaurant in restaurants" :key="restaurant.id" class="card my-3 border-0">
       <div class="row no-gutters">
-        <div class="col-md-4">
+        <div class="image p-2">
           <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">
-            <img class="card-img" :src="restaurant.image" />
+            <img class="w-100 rounded-sm" :src="restaurant.image" />
           </router-link>
         </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title">{{restaurant.name}}</h5>
-            <span class="badge badge-secondary">收藏數：{{restaurant.favoriteUser}}</span>
-            <p class="card-text">{{restaurant.description}}</p>
+        <div class="col flex-column d-flex justify-content-between">
+          <div class="card-body pb-0">
+            <h5 class="card-title m-0">{{restaurant.name}}</h5>
+            <small>
+              <i class="fas fa-bookmark"></i>
+              收藏數：{{restaurant.favoriteUser}}
+            </small>
+            <p class="card-text mb-0 mt-2 mt-lg-3 py-sm-2 py-md-1">{{restaurant.description}}</p>
+          </div>
+          <div
+            class="card-footer d-flex bg-white py-2 align-items-center justify-content-end border-0"
+          >
             <router-link
               :to="{name: 'restaurant', params: {id: restaurant.id}}"
-              class="btn btn-primary mr-2"
+              class="btn btn-outline-secondary btn-sm mr-2 shadow-sm"
             >Show</router-link>
 
             <button
               v-if="restaurant.isFavorite"
               @click.stop.prevent="deleteFavorite(restaurant.id)"
               type="button"
-              class="btn btn-danger mr-2"
+              class="btn btn-outline-secondary btn-sm shadow-sm"
             >移除最愛</button>
             <button
               v-else
               @click.stop.prevent="addFavorite(restaurant.id)"
               type="button"
-              class="btn btn-primary"
+              class="btn btn-outline-secondary btn-sm shadow-sm"
             >加到最愛</button>
           </div>
         </div>
       </div>
+      <hr />
     </div>
   </div>
 </template>
@@ -142,3 +143,68 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.image {
+  width: 100%;
+}
+
+.card-title {
+  color: rgb(73, 73, 73);
+}
+
+.card-body small,
+.card-body small i {
+  color: #c22424;
+}
+
+.btn-group-sm > .btn,
+.btn-sm {
+  border-radius: 0.3rem;
+  padding: 0.1 0.6rem;
+}
+
+/*md size*/
+@media screen and (min-width: 768px) {
+  /*Top Restaurant Section*/
+  .image {
+    width: 270px;
+  }
+}
+
+/*lg size*/
+@media screen and (min-width: 992px) {
+  /*Top Restaurant Section*/
+  .image {
+    width: 300px;
+  }
+
+  /*Follow & Favorite*/
+  .btn-group-sm > .btn,
+  .btn-sm {
+    padding: 0.2rem 0.7rem;
+  }
+
+  .card-title {
+    font-size: 1.6rem;
+  }
+
+  .card-text {
+    font-size: 1.1rem;
+  }
+}
+
+/*xl size*/
+@media screen and (min-width: 1200px) {
+  /*Top Restaurant Section*/
+  .image {
+    width: 350px;
+  }
+
+  /*Follow & Favorite*/
+  .btn-group-sm > .btn,
+  .btn-sm {
+    padding: 0.3rem 0.8rem;
+  }
+}
+</style>

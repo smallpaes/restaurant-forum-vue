@@ -1,16 +1,18 @@
 <template>
-  <div v-show="!isLoading" class="container py-5">
-    <h1>餐廳描述頁</h1>
+  <div v-show="!isLoading" class="container py-3">
     <!-- 餐廳資訊頁 RestaurantDetail -->
     <RestaurantDetail :initial-restaurant="restaurant" />
-    <hr />
-    <!-- 餐廳評論 RestaurantComments -->
-    <RestaurantComments
-      :restaurant-comments="restaurantComments"
-      @after-delete-comment="afterDeleteComment"
-    />
-    <!-- 新增評論 CreateComment -->
-    <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
+    <section class="row rounded-lg shadow-sm mt-3">
+      <div class="col-12 py-4">
+        <!-- 餐廳評論 RestaurantComments -->
+        <RestaurantComments
+          :restaurant-comments="restaurantComments"
+          @after-delete-comment="afterDeleteComment"
+        />
+        <!-- 新增評論 CreateComment -->
+        <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
+      </div>
+    </section>
   </div>
 </template>
 

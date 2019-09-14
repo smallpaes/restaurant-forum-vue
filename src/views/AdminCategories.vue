@@ -1,24 +1,22 @@
 <template>
-  <div class="container py-5">
+  <div class="container py-3">
     <AdminNav />
 
-    <form class="my-4">
+    <form class="mt-3 mb-4">
       <div class="form-row">
-        <div class="col-auto">
+        <div class="col-4">
           <input
             v-model="newCategoryName"
             type="text"
-            class="form-control"
+            class="add-input"
             placeholder="新增餐廳類別..."
             required
           />
-        </div>
-        <div class="col-auto">
           <button
             @click.stop.prevent="createCategory"
             :disabled="isProcessing"
             type="button"
-            class="btn btn-primary"
+            class="btn red-btn px-3"
           >新增</button>
         </div>
       </div>
@@ -34,7 +32,7 @@
       </thead>
       <tbody>
         <tr v-for="category in categories" :key="category.id">
-          <th scope="row">{{ category.id }}</th>
+          <th scope="row" class="pt-3">{{ category.id }}</th>
           <td class="position-relative">
             <div v-show="!category.isEditing" class="category-name">{{ category.name }}</div>
             <input
@@ -45,7 +43,7 @@
             />
             <span v-show="category.isEditing" @click="handleCancel(category.id)" class="cancel">X</span>
           </td>
-          <td class="d-flex justify-content-between">
+          <td class="d-flex justify-content-start">
             <button
               v-show="!category.isEditing"
               @click.stop.prevent="toggleIsEditing(category.id)"
@@ -312,5 +310,24 @@ export default {
   user-select: none;
   cursor: pointer;
   font-size: 12px;
+}
+
+.form-row:hover .add-input,
+.form-row:focus-within .add-input {
+  width: 70%;
+  transition: all 0.6s linear;
+}
+
+.add-input {
+  border: none;
+  width: 0;
+  padding: 0.2rem 0rem;
+  border-bottom: 1px solid #c22424;
+  margin-right: 0.2rem;
+}
+
+.add-input:focus,
+.add-input:hover {
+  outline: none;
 }
 </style>

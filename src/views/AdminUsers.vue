@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5">
+  <div class="container py-3">
     <AdminNav />
 
     <table class="table">
@@ -13,23 +13,23 @@
       </thead>
       <tbody>
         <tr v-for="user in users" :key="user.id">
-          <th scope="row">{{user.id}}</th>
-          <td>{{user.email}}</td>
-          <td v-if="user.isAdmin">admin</td>
-          <td v-else>user</td>
+          <th scope="row" class="py-3">{{user.id}}</th>
+          <td class="py-3">{{user.email}}</td>
+          <td class="py-3" v-if="user.isAdmin">admin</td>
+          <td class="py-3" v-else>user</td>
           <td>
             <template v-if="currentUser.id !== user.id">
               <button
                 v-if="user.isAdmin"
                 @click.stop.prevent="toggleUserRole(user.id)"
                 type="button"
-                class="btn btn-link"
+                class="btn btn-link pl-0"
               >set as user</button>
               <button
                 v-else
                 @click.stop.prevent="toggleUserRole(user.id)"
                 type="button"
-                class="btn btn-link"
+                class="btn btn-link pl-0"
               >set as admin</button>
             </template>
           </td>

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2 class="my-4">所有評論：</h2>
-
+    <h2 class="mb-4 mt-0">所有評論</h2>
+    <hr />
     <div v-for="comment in restaurantComments" :key="comment.id">
       <blockquote class="blockquote mb-0">
         <button
@@ -9,11 +9,14 @@
           @click.stop.prevent="handleDeleteButtonClick(comment.id)"
           :disabled="isProcessing"
           type="button"
-          class="btn btn-danger float-right"
-        >Delete</button>
-        <h3>
+          class="btn float-right"
+          aria-label="Close"
+        >
+          <h4 aria-hidden="true" class="text-secondary">&times;</h4>
+        </button>
+        <h5 class="user-name">
           <router-link :to="{name: 'user', params: {id: comment.User.id}}">{{comment.User.name}}</router-link>
-        </h3>
+        </h5>
         <p>{{comment.text}}</p>
         <footer class="blockquote-footer">{{comment.createdAt | fromNow}}</footer>
       </blockquote>
@@ -75,3 +78,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.user-name a {
+  color: #c22424;
+}
+</style>

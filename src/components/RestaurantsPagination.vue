@@ -1,6 +1,6 @@
 <template>
   <nav aria-label="Page navigation example">
-    <ul class="pagination">
+    <ul class="pagination d-flex justify-content-center">
       <!-- 回到上一頁 previousPage -->
       <li class="page-item">
         <router-link
@@ -69,3 +69,24 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.page-link {
+  color: #c22424;
+}
+
+.page-item.active .page-link {
+  background: #c22424;
+  border-color: #c22424;
+}
+
+.page-link:focus {
+  box-shadow: none;
+}
+
+.page-link:hover {
+  background-color: #c22424;
+  border-color: #c22424;
+  color: white;
+}
+</style>

@@ -5,7 +5,7 @@
       <textarea v-model="text" :disabled="isProcessing" class="form-control" rows="3" name="text" />
     </div>
     <div class="text-right">
-      <button :disabled="isProcessing" type="submit" class="btn btn-primary mr-0">Submit</button>
+      <button :disabled="isProcessing" type="submit" class="btn red-btn mr-0">Submit</button>
     </div>
   </form>
 </template>
