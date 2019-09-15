@@ -5,7 +5,7 @@
     <template v-else>
       <form class="mt-3 mb-4">
         <div class="form-row">
-          <div class="col-4">
+          <div class="col-auto">
             <input
               v-model="newCategoryName"
               type="text"
@@ -340,16 +340,9 @@ export default {
   font-size: 12px;
 }
 
-.form-row:hover .add-input,
-.form-row:focus-within .add-input {
-  width: 70%;
-  transition: all 0.6s linear;
-}
-
 .add-input {
   border: none;
-  width: 0;
-  padding: 0.2rem 0rem;
+  padding: 0.2rem 0.2rem;
   border-bottom: 1px solid #c22424;
   margin-right: 0.2rem;
 }
