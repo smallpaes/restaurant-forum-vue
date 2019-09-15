@@ -1,8 +1,8 @@
 <template>
   <div class="container py-3">
     <AdminNav />
-
-    <table class="table">
+    <Spinner v-if="isLoading" />
+    <table v-else class="table">
       <thead class="thead-dark">
         <tr>
           <th scope="col">#</th>
@@ -41,89 +41,70 @@
 
 <script>
 import AdminNav from "../components/AdminNav";
-
-const dummyData = {
-  users: [
-    {
-      id: 1,
-      name: "root",
-      email: "root@example.com",
-      password: "$2a$10$Z/IqhTucYmIFOF.CwcBR9.5pO3FiV4JE5e854j3zQXEg3vaYxbVP.",
-      isAdmin: true,
-      image: "http://lorempixel.com/200/200/people",
-      createdAt: "2019-09-01T05:36:02.343Z",
-      updatedAt: "2019-09-01T05:36:02.343Z"
-    },
-    {
-      id: 2,
-      name: "user1",
-      email: "user1@example.com",
-      password: "$2a$10$rNBwPRm.J3HAJoxhr8E.leFOOzxzSROUz9FviyCdlxodYiN.2kQmG",
-      isAdmin: false,
-      image: "http://lorempixel.com/200/200/people",
-      createdAt: "2019-09-01T05:36:02.466Z",
-      updatedAt: "2019-09-01T05:36:02.466Z"
-    },
-    {
-      id: 3,
-      name: "user2",
-      email: "user2@example.com",
-      password: "$2a$10$e6aj/OE8rH0eRMMWWSh4Te7bJ4J9JzWtOmJCYsSfSHpY.4pbV3R2W",
-      isAdmin: false,
-      image: "http://lorempixel.com/200/200/people",
-      createdAt: "2019-09-01T05:36:02.590Z",
-      updatedAt: "2019-09-01T05:36:02.590Z"
-    },
-    {
-      id: 4,
-      name: "test111",
-      email: "test101@example.com",
-      password: "$2a$10$ixwnv6bcsTKAlDcAVrCsvun.wHwSoXtMKUSi5TzRs44xMZFC4nE3u",
-      isAdmin: false,
-      image: "https://i.imgur.com/X1Oao1b.png",
-      createdAt: "2019-09-03T11:51:30.989Z",
-      updatedAt: "2019-09-03T11:53:24.820Z"
-    }
-  ],
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true
-  },
-  isAuthenticated: true
-};
+import adminAPI from "../apis/admin";
+import { Toast } from "../utils/helpers";
+import Spinner from "../components/Spinner";
+import { mapState } from "vuex";
+import { stat } from "fs";
 
 export default {
   components: {
-    AdminNav
+    AdminNav,
+    Spinner
   },
   data() {
     return {
       users: [],
-      currentUser: dummyData.currentUser
+      isLoading: true
     };
   },
   created() {
     this.fetchUsers();
   },
+  computed: {
+    ...mapState(["currentUser"])
+  },
   methods: {
-    fetchUsers() {
-      this.users = dummyData.users;
-    },
-    toggleUserRole(userId) {
-      // PUT request to API
-      // update user role
-      this.users = this.users.map(user => {
-        if (user.id !== userId) {
-          return user;
+    async fetchUsers() {
+      try {
+        const { data, statusText } = await adminAPI.users.get();
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
         }
-        return {
-          ...user,
-          isAdmin: !user.isAdmin
-        };
-      });
+        this.users = data.users;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        Toast.fire({
+          type: "error",
+          title: "Cannot get user data, please try again later!"
+        });
+      }
+    },
+    async toggleUserRole(userId) {
+      try {
+        const { data, statusText } = await adminAPI.users.update({ userId });
+        // error handling
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // update user role
+        this.users = this.users.map(user => {
+          if (user.id !== userId) {
+            return user;
+          }
+          return {
+            ...user,
+            isAdmin: !user.isAdmin
+          };
+        });
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "Cannot change user role, please try again later!"
+        });
+      }
     }
   }
 };
