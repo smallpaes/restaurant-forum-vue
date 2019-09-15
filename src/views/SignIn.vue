@@ -1,51 +1,45 @@
 <template>
-  <div class="container py-5">
-    <form class="w-100" @submit.prevent.stop="handleSubmit">
-      <div class="text-center mb-4">
-        <h1 class="h3 mb-3 font-weight-normal">Sign In</h1>
+  <div class="row">
+    <div class="auth-form-container shadow-sm mt-5">
+      <div class="cover-photo">
+        <div class="overlay"></div>
+        <h2>Sign In</h2>
       </div>
+      <form class="form-signin bg-white" @submit.prevent.stop="handleSubmit">
+        <div class="form-group">
+          <label for="email" class="m-0 text-secondary">
+            <small>User Email</small>
+          </label>
+          <input
+            id="email"
+            v-model="email"
+            name="email"
+            type="email"
+            class="form-control"
+            required
+            autofocus
+          />
+        </div>
+        <div class="form-group">
+          <label for="password" class="m-0 text-secondary">
+            <small>Password</small>
+          </label>
+          <input
+            id="password"
+            v-model="password"
+            name="password"
+            type="password"
+            class="form-control"
+            required
+          />
+        </div>
 
-      <div class="form-label-group mb-2">
-        <label for="email">email</label>
-        <input
-          id="email"
-          v-model="email"
-          name="email"
-          type="email"
-          class="form-control"
-          placeholder="email"
-          required
-          autofocus
-        />
-      </div>
-
-      <div class="form-label-group mb-3">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          v-model="password"
-          name="password"
-          type="password"
-          class="form-control"
-          placeholder="Password"
-          required
-        />
-      </div>
-
-      <button
-        :disabled="isProcessing"
-        class="btn btn-lg btn-primary btn-block mb-3"
-        type="submit"
-      >Submit</button>
-
-      <div class="text-center mb-3">
-        <p>
-          <router-link to="/signup">Sign Up</router-link>
-        </p>
-      </div>
-
-      <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
-    </form>
+        <div class="buttons log-in-buttons text-center">
+          <button :disabled="isProcessing" class="btn mx-2 login w-50" type="submit">Log In</button>
+          <router-link to="/signup" class="btn signup w-50 mt-1">Sign Up</router-link>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 

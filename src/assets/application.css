@@ -65,3 +65,101 @@ button:focus,
 .underline-animation:hover::after {
   width: 100%;
 }
+
+/*Auth Form*/
+.auth-form-container {
+  overflow: hidden;
+  border-radius: 0.8rem;
+  width: 450px;
+  margin: 0 auto;
+}
+
+.cover-photo {
+  position: relative;
+  background-image: url("https://cdn.pixabay.com/photo/2015/03/26/10/28/restaurant-691397_960_720.jpg");
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  height: 130px;
+}
+
+.cover-photo .overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(185, 183, 183, 0.5);
+}
+
+.cover-photo h2 {
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 1px 1px 2px rgb(110, 110, 110);
+}
+
+/*Form*/
+.form-signin,
+.form-signup {
+  padding: 2rem 2rem 1.3rem 2rem;
+}
+
+.form-signin .form-control,
+.form-signup .form-control {
+  padding: 0.375rem 0;
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom-color: #c5c5c5;
+}
+
+.form-signin .form-control:focus,
+.form-signup .form-control:focus {
+  border-bottom-color: #c22424c4;
+  box-shadow: none;
+}
+
+.form-signin .buttons,
+.form-signup .buttons {
+  margin-top: 2.2rem;
+}
+
+.form-signup .btn:focus,
+.form-signin .btn:focus {
+  box-shadow: none;
+}
+
+.form-signin .buttons .btn,
+.form-signup .buttons .btn {
+  border-radius: 1rem;
+  padding: 0.3rem 1.5rem;
+}
+
+.log-in-buttons .login,
+.sign-up-buttons .signup {
+  background: #c22424c4;
+  color: white;
+}
+
+.log-in-buttons .login:hover,
+.sign-up-buttons .signup:hover {
+  background: #c22424;
+  -webkit-box-shadow: 1px 1px 3px 0px rgba(189, 189, 189, 1);
+  -moz-box-shadow: 1px 1px 3px 0px rgba(189, 189, 189, 1);
+  box-shadow: 1px 1px 3px 0px rgba(189, 189, 189, 1);
+  transition: all 0.2s linear;
+}
+
+.log-in-buttons .signup,
+.sign-up-buttons .login {
+  color: #626363;
+}
+
+.log-in-buttons .signup:hover,
+.sign-up-buttons .login:hover {
+  text-decoration: underline;
+}

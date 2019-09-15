@@ -1,84 +1,69 @@
 <template>
-  <div class="container py-5">
-    <form class="w-100" @submit.stop.prevent="handleSubmit">
-      <div class="text-center mb-4">
-        <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
+  <div class="row">
+    <div class="auth-form-container shadow-sm mt-5">
+      <div class="cover-photo">
+        <div class="overlay"></div>
+        <h2>Sign Up</h2>
       </div>
-
-      <div class="form-label-group mb-2">
-        <label for="name">Name</label>
-        <input
-          id="name"
-          v-model="name"
-          name="name"
-          type="text"
-          class="form-control"
-          placeholder="name"
-          required
-          autofocus
-        />
-      </div>
-
-      <div class="form-label-group mb-2">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          v-model="email"
-          name="email"
-          type="email"
-          class="form-control"
-          placeholder="email"
-          required
-        />
-      </div>
-
-      <div class="form-label-group mb-3">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          v-model="password"
-          name="password"
-          type="password"
-          class="form-control"
-          placeholder="Password"
-          required
-        />
-      </div>
-
-      <div class="form-label-group mb-3">
-        <label for="password-check">Password Check</label>
-        <input
-          id="password-check"
-          v-model="passwordCheck"
-          name="passwordCheck"
-          type="password"
-          class="form-control"
-          placeholder="Password"
-          required
-        />
-      </div>
-
-      <button
-        :disabled="isProcessing"
-        class="btn btn-lg btn-primary btn-block mb-3"
-        type="submit"
-      >Submit</button>
-
-      <div class="text-center mb-3">
-        <p>
-          <router-link to="/signin">Sign In</router-link>
-        </p>
-      </div>
-
-      <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
-    </form>
+      <form class="form-signup bg-white" @submit.stop.prevent="handleSubmit">
+        <div class="form-group">
+          <label for="name" class="m-0 text-secondary">
+            <small>Name</small>
+          </label>
+          <input
+            id="name"
+            v-model="name"
+            name="name"
+            type="text"
+            class="form-control"
+            required
+            autofocus
+          />
+        </div>
+        <div class="form-group">
+          <label for="email" class="m-0 text-secondary">
+            <small>Email</small>
+          </label>
+          <input id="email" v-model="email" name="email" type="email" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="password" class="m-0 text-secondary">
+            <small>Password</small>
+          </label>
+          <input
+            id="password"
+            v-model="password"
+            name="password"
+            type="password"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password-check" class="m-0 text-secondary">
+            <small>Password Check</small>
+          </label>
+          <input
+            id="password-check"
+            v-model="passwordCheck"
+            name="passwordCheck"
+            type="password"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="buttons sign-up-buttons text-center">
+          <button :disabled="isProcessing" class="btn mx-2 signup w-50" type="submit">Sign Up</button>
+          <router-link to="/signin" class="btn login w-50 mt-1">Sign In</router-link>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
 import authorizationAPI from "../apis/authorization";
 import { Toast } from "../utils/helpers";
-import authorization from "../apis/authorization";
 
 export default {
   name: "SignUp",
