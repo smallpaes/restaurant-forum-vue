@@ -1,5 +1,6 @@
 <template>
   <div class="col-md-6 col-lg-4">
+    <Spinner v-if="isLoading" />
     <div v-show="!isLoading" class="card mb-4 border-0 shadow-sm">
       <img class="card-img-top" :src="restaurant.image" @load="changeLoading" alt="Card image cap" />
       <div class="card-body">
@@ -54,8 +55,12 @@
 <script>
 import usersAPI from "../apis/users";
 import { Toast } from "../utils/helpers";
+import Spinner from "../components/Spinner";
 
 export default {
+  components: {
+    Spinner
+  },
   props: {
     initialRestaurant: {
       type: Object,
