@@ -148,6 +148,7 @@ router.beforeEach(async (to, from, next) => {
   // redirect to home page
   if (isAuthenticated && to.name === 'sign-in') {
     next('/restaurants')
+    return
   }
 
   next()
