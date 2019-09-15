@@ -36,12 +36,20 @@
         </tr>
       </tbody>
     </table>
+    <!--Pagination-->
+    <AdminPanelPagination
+      v-if="totalPage > 1"
+      :total-page="totalPage"
+      :current-page="currentPage"
+      :admin-panel="adminPanel"
+    />
   </div>
 </template>
 
 <script>
 import AdminNav from "../components/AdminNav";
 import adminAPI from "../apis/admin";
+import AdminPanelPagination from "../components/AdminPanelPagination";
 import { Toast } from "../utils/helpers";
 import Spinner from "../components/Spinner";
 import { mapState } from "vuex";
@@ -50,24 +58,34 @@ import { stat } from "fs";
 export default {
   components: {
     AdminNav,
-    Spinner
+    Spinner,
+    AdminPanelPagination
   },
   data() {
     return {
       users: [],
-      isLoading: true
+      isLoading: true,
+      currentPage: 1,
+      totalPage: -1,
+      adminPanel: ""
     };
   },
   created() {
     this.fetchUsers();
+    this.adminPanel = this.$route.name;
   },
   computed: {
     ...mapState(["currentUser"])
   },
+  beforeRouteUpdate(to, from, next) {
+    const { page } = to.query;
+    this.fetchUsers(page);
+    next();
+  },
   methods: {
-    async fetchUsers() {
+    async fetchUsers(page = 1) {
       try {
-        const { data, statusText } = await adminAPI.users.get();
+        const { data, statusText } = await adminAPI.users.get({ page });
         // error handling
         if (statusText !== "OK" || data.status !== "success") {
           throw new Error(statusText);

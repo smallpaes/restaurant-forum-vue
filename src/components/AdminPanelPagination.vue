@@ -7,7 +7,7 @@
           class="page-link"
           aria-label="Previous"
           v-show="previousPage"
-          :to="{name: 'restaurants', query: { categoryId, page: previousPage }}"
+          :to="{name: adminPanel, query: { page: previousPage }}"
         >
           <span aria-hidden="true">&laquo;</span>
         </router-link>
@@ -20,10 +20,7 @@
         class="page-item"
         :class="['page-item', { active: currentPage === page }]"
       >
-        <router-link
-          class="page-link"
-          :to="{name: 'restaurants', query: { categoryId, page }}"
-        >{{ page }}</router-link>
+        <router-link class="page-link" :to="{name: adminPanel, query: { page }}">{{ page }}</router-link>
       </li>
 
       <!-- 前往下一頁 nextPage -->
@@ -31,7 +28,7 @@
         <router-link
           class="page-link"
           v-show="nextPage"
-          :to="{name: 'restaurants', query: { categoryId, page: nextPage }}"
+          :to="{name: adminPanel, query: { page: nextPage }}"
           aria-label="Next"
         >
           <span aria-hidden="true">&raquo;</span>
@@ -44,9 +41,6 @@
 <script>
 export default {
   props: {
-    categoryId: {
-      default: -1
-    },
     currentPage: {
       type: Number,
       default: 1
@@ -54,6 +48,10 @@ export default {
     totalPage: {
       type: Number,
       default: -1
+    },
+    adminPanel: {
+      type: String,
+      required: true
     }
   },
   computed: {
@@ -61,9 +59,7 @@ export default {
       return this.currentPage === 1 ? null : this.currentPage - 1;
     },
     nextPage() {
-      return this.currentPage + 1 > this.totalPage
-        ? null
-        : this.currentPage + 1;
+      return this.currentPage === this.totalPage ? null : this.currentPage + 1;
     }
   }
 };

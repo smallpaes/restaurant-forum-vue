@@ -69,12 +69,20 @@
           </tr>
         </tbody>
       </table>
+      <!--Pagination-->
+      <AdminPanelPagination
+        v-if="totalPage > 1"
+        :total-page="totalPage"
+        :current-page="currentPage"
+        :admin-panel="adminPanel"
+      />
     </template>
   </div>
 </template>
 
 <script>
 import adminAPI from "../apis/admin";
+import AdminPanelPagination from "../components/AdminPanelPagination";
 import { Toast } from "../utils/helpers";
 import AdminNav from "../components/AdminNav";
 import Spinner from "../components/Spinner";
@@ -82,23 +90,33 @@ import Spinner from "../components/Spinner";
 export default {
   components: {
     AdminNav,
-    Spinner
+    Spinner,
+    AdminPanelPagination
   },
   data() {
     return {
       newCategoryName: "",
       categories: [],
       isProcessing: false,
-      isLoading: true
+      isLoading: true,
+      currentPage: 1,
+      totalPage: -1,
+      adminPanel: ""
     };
   },
   created() {
     this.fetchCategories();
+    this.adminPanel = this.$route.name;
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { page } = to.query;
+    this.fetchCategories(page);
+    next();
   },
   methods: {
-    async fetchCategories() {
+    async fetchCategories(page = 1) {
       try {
-        const { data, statusText } = await adminAPI.categories.get();
+        const { data, statusText } = await adminAPI.categories.get({ page });
         // error handling
         if (statusText !== "OK") {
           throw new Error(statusText);
@@ -109,6 +127,8 @@ export default {
           isEditing: false,
           isProcessing: false
         }));
+        this.currentPage = data.currentPage;
+        this.totalPage = data.pagination.length;
         // update loading status
         this.isLoading = false;
       } catch (error) {

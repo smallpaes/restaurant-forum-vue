@@ -2,8 +2,9 @@ import { apiHelper } from "../utils/helpers"
 
 export default {
   categories: {
-    get() {
-      return apiHelper.get('/admin/categories')
+    get({ page }) {
+      const searchParams = new URLSearchParams({ page })
+      return apiHelper.get(`/admin/categories?${searchParams.toString()}`)
     },
     create({ name }) {
       return apiHelper.post('/admin/categories', { name })
@@ -19,8 +20,9 @@ export default {
     create({ formData }) {
       return apiHelper.post('/admin/restaurants', formData)
     },
-    get() {
-      return apiHelper.get('/admin/restaurants')
+    get({ page }) {
+      const searchParams = new URLSearchParams({ page })
+      return apiHelper.get(`/admin/restaurants?${searchParams.toString()}`)
     },
     getDetail({ restaurantId }) {
       return apiHelper.get(`/admin/restaurants/${restaurantId}`)
@@ -33,8 +35,9 @@ export default {
     }
   },
   users: {
-    get() {
-      return apiHelper.get('/admin/users')
+    get({ page }) {
+      const searchParams = new URLSearchParams({ page })
+      return apiHelper.get(`/admin/users?${searchParams.toString()}`)
     },
     update({ userId }) {
       return apiHelper.put(`/admin/users/${userId}`)

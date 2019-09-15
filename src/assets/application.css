@@ -163,3 +163,24 @@ button:focus,
 .sign-up-buttons .login:hover {
   text-decoration: underline;
 }
+
+/*Pagination*/
+.page-link {
+  color: #c22424;
+}
+
+.page-item.active .page-link {
+  background: #c22424;
+  border-color: #c22424;
+}
+
+.page-link:focus {
+  box-shadow: none;
+}
+
+.page-link:hover,
+.page-link:hover span {
+  background-color: #c22424;
+  border-color: #c22424;
+  color: white;
+}
