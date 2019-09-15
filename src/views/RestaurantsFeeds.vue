@@ -2,7 +2,8 @@
   <div class="container py-3">
     <!--NavTabs-->
     <NavTabs />
-    <div class="row">
+    <Spinner v-if="isLoading" />
+    <div v-else class="row">
       <div class="col-lg-6">
         <!-- 最新餐廳 NewestRestaurants -->
         <NewestRestaurants :restaurants="restaurants" />
@@ -21,17 +22,20 @@ import { Toast } from "../utils/helpers";
 import NavTabs from "../components/NavTabs";
 import NewestRestaurants from "../components/NewestRestaurants";
 import NewestComments from "../components/NewestComments";
+import Spinner from "../components/Spinner";
 
 export default {
   components: {
     NavTabs,
     NewestRestaurants,
-    NewestComments
+    NewestComments,
+    Spinner
   },
   data() {
     return {
       restaurants: [],
-      comments: []
+      comments: [],
+      isLoading: true
     };
   },
   created() {
@@ -49,7 +53,9 @@ export default {
 
         this.restaurants = data.restaurants;
         this.comments = data.comments;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot retrieve restaurant feed, please try again later!"

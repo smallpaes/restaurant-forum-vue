@@ -1,8 +1,9 @@
 <template>
   <div class="container py-3">
     <NavTabs />
+    <Spinner v-if="isLoading" />
     <!--Show Top Restaurants-->
-    <div v-for="restaurant in restaurants" :key="restaurant.id" class="card my-3 border-0">
+    <div v-else v-for="restaurant in restaurants" :key="restaurant.id" class="card my-3 border-0">
       <div class="row no-gutters">
         <div class="image p-2">
           <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">
@@ -51,14 +52,17 @@ import restaurantsAPI from "../apis/restaurants";
 import usersAPI from "../apis/users";
 import { Toast } from "../utils/helpers";
 import NavTabs from "../components/NavTabs";
+import Spinner from "../components/Spinner";
 
 export default {
   components: {
-    NavTabs
+    NavTabs,
+    Spinner
   },
   data() {
     return {
-      restaurants: []
+      restaurants: [],
+      isLoading: true
     };
   },
   created() {
@@ -74,7 +78,9 @@ export default {
         }
         // update restaurant data
         this.restaurants = data.restaurants;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot show top restaurants, please try again later"

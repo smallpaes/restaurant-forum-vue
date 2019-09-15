@@ -1,18 +1,21 @@
 <template>
-  <div v-show="!isLoading" class="container py-3">
-    <!-- 餐廳資訊頁 RestaurantDetail -->
-    <RestaurantDetail :initial-restaurant="restaurant" />
-    <section class="row rounded-lg shadow-sm mt-3">
-      <div class="col-12 py-4">
-        <!-- 餐廳評論 RestaurantComments -->
-        <RestaurantComments
-          :restaurant-comments="restaurantComments"
-          @after-delete-comment="afterDeleteComment"
-        />
-        <!-- 新增評論 CreateComment -->
-        <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
-      </div>
-    </section>
+  <div class="container py-3">
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <!-- 餐廳資訊頁 RestaurantDetail -->
+      <RestaurantDetail :initial-restaurant="restaurant" />
+      <section class="row rounded-lg shadow-sm mt-3">
+        <div class="col-12 py-4">
+          <!-- 餐廳評論 RestaurantComments -->
+          <RestaurantComments
+            :restaurant-comments="restaurantComments"
+            @after-delete-comment="afterDeleteComment"
+          />
+          <!-- 新增評論 CreateComment -->
+          <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
+        </div>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -23,6 +26,7 @@ import RestaurantDetail from "../components/RestaurantDetail";
 import RestaurantComments from "../components/RestaurantComments";
 import CreateComment from "../components/CreateComment";
 import { mapState } from "vuex";
+import Spinner from "../components/Spinner";
 
 export default {
   data() {
@@ -58,6 +62,8 @@ export default {
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
+        this.isLoading = true;
+
         const { data, statusText } = await restaurantAPI.getRestaurant({
           restaurantId
         });
@@ -116,7 +122,8 @@ export default {
   components: {
     RestaurantDetail,
     RestaurantComments,
-    CreateComment
+    CreateComment,
+    Spinner
   }
 };
 </script>

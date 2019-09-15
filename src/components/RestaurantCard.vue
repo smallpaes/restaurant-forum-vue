@@ -1,13 +1,13 @@
 <template>
   <div class="col-md-6 col-lg-4">
-    <div class="card mb-4 border-0 shadow-sm">
-      <img class="card-img-top" :src="restaurant.image" alt="Card image cap" />
+    <div v-show="!isLoading" class="card mb-4 border-0 shadow-sm">
+      <img class="card-img-top" :src="restaurant.image" @load="changeLoading" alt="Card image cap" />
       <div class="card-body">
         <h5 class="card-title m-0">
           <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">{{restaurant.name}}</router-link>
         </h5>
         <div class="d-flex align-items-center mt-2 mb-3">
-          <span class="badge mr-2">{{restaurant.Category.name}}</span>
+          <span class="badge mr-2">{{restaurant.Category && restaurant.Category.name}}</span>
           <button
             v-if="restaurant.isFavorited"
             type="button"
@@ -60,10 +60,14 @@ export default {
   },
   data() {
     return {
-      restaurant: this.initialRestaurant
+      restaurant: this.initialRestaurant,
+      isLoading: true
     };
   },
   methods: {
+    changeLoading(e) {
+      this.isLoading = false;
+    },
     async addFavorite(restaurantId) {
       try {
         const { data, statusText } = await usersAPI.addFavorite({

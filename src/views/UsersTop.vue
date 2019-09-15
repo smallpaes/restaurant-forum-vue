@@ -1,7 +1,8 @@
 <template>
   <div class="container py-3">
     <NavTabs />
-    <div class="row text-center mt-3">
+    <Spinner v-if="isLoading" />
+    <div v-else class="row text-center mt-3">
       <!--User Card-->
       <div v-for="user in users" :key="user.id" class="col-12 col-md-6 col-lg-3 my-3">
         <router-link :to="{name: 'user', params: {id: user.id}}">
@@ -40,6 +41,7 @@ import { Toast } from "../utils/helpers";
 import NavTabs from "../components/NavTabs";
 import { placeholderImageCreator } from "../utils/mixins";
 import { mapState } from "vuex";
+import Spinner from "../components/Spinner";
 
 export default {
   mixins: [placeholderImageCreator],
@@ -48,11 +50,13 @@ export default {
   },
   data() {
     return {
-      users: []
+      users: [],
+      isLoading: true
     };
   },
   components: {
-    NavTabs
+    NavTabs,
+    Spinner
   },
   created() {
     this.fetchUser();
@@ -67,7 +71,9 @@ export default {
         }
         // update user data
         this.users = data.users;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot get top users, please try again later"

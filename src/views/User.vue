@@ -1,5 +1,6 @@
 <template>
-  <div class="album py-5 bg-light">
+  <Spinner v-if="isLoading" />
+  <div v-else class="album py-5 bg-light">
     <div class="container">
       <UserProfileCard
         :profile="profile"
@@ -31,6 +32,7 @@ import UserFollowersCard from "../components/UserFollowersCard";
 import UserCommentsCard from "../components/UserCommentsCard";
 import UserFavoritedRestaurantsCard from "../components/UserFavoritedRestaurantsCard";
 import userAPI from "../apis/users";
+import Spinner from "../components/Spinner";
 import { mapState } from "vuex";
 import { Toast } from "../utils/helpers";
 import { mkdir } from "fs";
@@ -49,7 +51,8 @@ export default {
         Followers: [],
         Followings: []
       },
-      isFollowed: false
+      isFollowed: false,
+      isLoading: true
     };
   },
   components: {
@@ -57,7 +60,8 @@ export default {
     UserFollowingsCard,
     UserFollowersCard,
     UserCommentsCard,
-    UserFavoritedRestaurantsCard
+    UserFavoritedRestaurantsCard,
+    Spinner
   },
   computed: {
     ...mapState(["currentUser"])
@@ -74,6 +78,8 @@ export default {
   methods: {
     async fetchUser(userId) {
       try {
+        // update loading status
+        this.isLoading = true;
         const { data, statusText } = await userAPI.get({ userId });
         // error handling
         if (statusText !== "OK" || data.status !== "success") {
@@ -92,7 +98,9 @@ export default {
           Followings: data.owner.Followings
         };
         this.isFollowed = data.owner.isFollowed;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot get profile, please try again later!"

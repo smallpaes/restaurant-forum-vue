@@ -1,5 +1,6 @@
 <template>
-  <table class="table">
+  <Spinner v-if="isLoading" />
+  <table v-else class="table">
     <thead class="thead-dark">
       <tr>
         <th scope="col">#</th>
@@ -38,15 +39,19 @@
 <script>
 import adminAPI from "../apis/admin";
 import { Toast } from "../utils/helpers";
-import admin from "../apis/admin";
+import Spinner from "../components/Spinner";
 
 export default {
+  components: {
+    Spinner
+  },
   created() {
     this.fetchRestaurants();
   },
   data() {
     return {
-      restaurants: []
+      restaurants: [],
+      isLoading: true
     };
   },
   methods: {
@@ -59,7 +64,9 @@ export default {
         }
         // update restaurant data
         this.restaurants = data.restaurants;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot show restaurants, please try again later"

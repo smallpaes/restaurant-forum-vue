@@ -45,7 +45,6 @@
 export default {
   props: {
     categoryId: {
-      type: Number,
       default: -1
     },
     currentPage: {

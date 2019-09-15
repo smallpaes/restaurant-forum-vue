@@ -1,6 +1,7 @@
 <template>
   <div class="container py-5">
-    <div class="row">
+    <Spinner v-if="isLoading" />
+    <div v-else class="row">
       <div class="col-md-12">
         <h1>{{ restaurant.name }}</h1>
         <p>[{{ restaurant.categoryName }}]</p>
@@ -41,29 +42,7 @@
 import adminAPI from "../apis/admin";
 import { Toast } from "../utils/helpers";
 import { placeholderImageCreator } from "../utils/mixins";
-import admin from "../apis/admin";
-
-const dummyData = {
-  restaurant: {
-    id: 1,
-    name: "Tina Schamberger",
-    tel: "216.427.8386",
-    address: "899 Erica Alley",
-    opening_hours: "08:00",
-    description: "natus veritatis omnis",
-    image: "http://lorempixel.com/640/480",
-    viewCounts: 7,
-    createdAt: "2019-09-01T05:36:02.606Z",
-    updatedAt: "2019-09-06T05:05:20.378Z",
-    CategoryId: 1,
-    Category: {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-09-01T05:36:02.602Z",
-      updatedAt: "2019-09-01T05:36:02.602Z"
-    }
-  }
-};
+import Spinner from "../components/Spinner";
 
 export default {
   name: "AdminRestaurant",
@@ -79,7 +58,8 @@ export default {
         tel: "",
         address: "",
         description: ""
-      }
+      },
+      isLoading: true
     };
   },
   mounted() {
@@ -94,6 +74,8 @@ export default {
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
+        // update loading status
+        this.isLoading = true;
         const {
           data: { restaurant },
           statusText
@@ -114,13 +96,19 @@ export default {
           address: restaurant.address,
           description: restaurant.description
         };
+        // update loading status
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot get restaurant info, please try again later"
         });
       }
     }
+  },
+  components: {
+    Spinner
   }
 };
 </script>

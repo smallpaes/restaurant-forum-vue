@@ -1,5 +1,6 @@
 <template>
-  <form v-show="!isLoading" @submit.stop.prevent="handleSubmit">
+  <Spinner v-if="isLoading" />
+  <form v-else v-show="!isLoading" @submit.stop.prevent="handleSubmit">
     <div class="form-group">
       <label for="name">Name</label>
       <input
@@ -107,8 +108,12 @@
 <script>
 import adminAPI from "../apis/admin";
 import { Toast } from "../utils/helpers";
+import Spinner from "../components/Spinner";
 
 export default {
+  components: {
+    Spinner
+  },
   props: {
     initialRestaurant: {
       type: Object,
@@ -171,7 +176,6 @@ export default {
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
-        console.log(error);
         Toast.fire({
           type: "error",
           title: "Cannot get restaurant categories, please try again later"

@@ -1,6 +1,8 @@
 <template>
   <div class="container py-5">
+    <Spinner v-if="isLoading" />
     <RestaurantOverview
+      v-else
       :restaurant="restaurant"
       :comment-count="commentCount"
       :favorite-user="favoriteUser"
@@ -12,10 +14,12 @@
 import RestaurantOverview from "../components/RestaurantOverview";
 import restaurantAPI from "../apis/restaurants";
 import { Toast } from "../utils/helpers";
+import Spinner from "../components/Spinner";
 
 export default {
   components: {
-    RestaurantOverview
+    RestaurantOverview,
+    Spinner
   },
   data() {
     return {
@@ -25,7 +29,8 @@ export default {
         categoryName: ""
       },
       commentCount: -1,
-      favoriteUser: -1
+      favoriteUser: -1,
+      isLoading: true
     };
   },
   created() {
@@ -40,6 +45,7 @@ export default {
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
+        this.isLoading = true;
         const { data, statusText } = await restaurantAPI.getDashboard({
           restaurantId
         });
@@ -55,7 +61,9 @@ export default {
         };
         this.commentCount = data.commentCount;
         this.favoriteUser = data.favoriteUser;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           type: "error",
           title: "Cannot get restaurant info, please try again later"

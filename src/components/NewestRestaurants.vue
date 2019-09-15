@@ -13,7 +13,7 @@
           </h4>
           <small class="datetime d-block text-right">{{restaurant.createdAt | fromNow}}</small>
         </div>
-        <small class="category">{{restaurant.Category.name}}</small>
+        <small class="category">{{restaurant.Category && restaurant.Category.name}}</small>
         <p v-if="restaurant.description" class="mt-3">{{restaurant.description | shortenContent}}</p>
         <p v-else class="mt-3">No description</p>
         <hr />
