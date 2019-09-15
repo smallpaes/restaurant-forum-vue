@@ -22,6 +22,10 @@
       </blockquote>
       <hr />
     </div>
+    <div v-if="restaurantComments.length < 1" class="my-4">
+      目前還沒有任何評論！
+      <hr />
+    </div>
   </div>
 </template>
 
