@@ -26,7 +26,12 @@ export default {
       restaurant: {
         id: -1,
         name: "",
-        categoryName: ""
+        categoryName: "",
+        openingHour: "",
+        tel: "",
+        description: "",
+        image: "",
+        viewCounts: -1
       },
       commentCount: -1,
       favoriteUser: -1,
@@ -57,7 +62,12 @@ export default {
         this.restaurant = {
           id: data.restaurant.id,
           name: data.restaurant.name,
-          categoryName: data.restaurant.Category.name
+          image: data.restaurant.image,
+          categoryName: data.restaurant.Category.name,
+          openingHour: data.restaurant.opening_hours,
+          tel: data.restaurant.tel,
+          description: data.restaurant.description,
+          viewCounts: data.restaurant.viewCounts
         };
         this.commentCount = data.commentCount;
         this.favoriteUser = data.favoriteUser;
