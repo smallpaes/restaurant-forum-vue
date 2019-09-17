@@ -1,7 +1,7 @@
 <template>
   <Spinner v-if="isLoading" />
-  <div v-else class="album py-5 bg-light">
-    <div class="container">
+  <div v-else class="container py-3">
+    <div class="row">
       <UserProfileCard
         :profile="profile"
         :initial-is-followed="isFollowed"
@@ -9,18 +9,15 @@
         @handle-after-following="handleAfterFollowing"
         @handle-after-unfollowing="handleAfterUnfollowing"
       />
-      <div class="row">
-        <div class="col-md-4">
-          <UserFollowingsCard :following-users="profile.Followings" />
-          <br />
-          <UserFollowersCard :followers="profile.Followers" />
-        </div>
-        <div class="col-md-8">
-          <UserCommentsCard :comments="profile.Comments" />
-          <br />
-          <UserFavoritedRestaurantsCard :favorite-restaurants="profile.FavoritedRestaurants" />
-        </div>
-      </div>
+      <section class="col-12 col-md-5">
+        <UserFollowingsCard :following-users="profile.Followings" />
+        <UserFollowersCard :followers="profile.Followers" />
+      </section>
+
+      <section class="col-12 col-md-7">
+        <UserCommentsCard :comments="profile.Comments" />
+        <UserFavoritedRestaurantsCard :favorite-restaurants="profile.FavoritedRestaurants" />
+      </section>
     </div>
   </div>
 </template>
@@ -121,3 +118,123 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/*display area  size*/
+#following .card-body,
+#follower .card-body,
+#comment .card-body,
+#favorite .card-body {
+  max-height: 280px;
+  overflow-y: scroll;
+}
+
+.header {
+  color: rgb(100, 100, 100);
+  font-size: 1.2rem;
+}
+
+/*User Profile*/
+.user-name {
+  color: #379683;
+}
+
+.btn-group-sm > .btn,
+.btn-sm {
+  border-radius: 1rem;
+}
+
+.btn-outline-secondary.focus,
+.btn-outline-secondary:focus,
+.btn.focus,
+.btn:focus {
+  box-shadow: none;
+}
+
+/*Commented Restaurants*/
+a.media {
+  color: rgb(100, 100, 100);
+}
+
+a.media:hover {
+  color: rgb(73, 73, 73);
+}
+
+.media .media-image {
+  width: 64px;
+  height: 64px;
+}
+
+.media .media-image .loader-container {
+  position: relative;
+  display: inline-block;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.media .media-image .loader {
+  border: 4px solid #f3f3f3;
+  border-top: 5px solid rgb(133, 133, 133);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 2s linear infinite;
+}
+
+/*Control spin steps*/
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(360deg);
+  }
+}
+
+.media img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 64px;
+  height: auto;
+}
+
+/*md size*/
+@media screen and (min-width: 768px) {
+  /*display area  size*/
+  #following .card-body,
+  #follower .card-body,
+  #comment .card-body,
+  #favorite .card-body {
+    height: 280px;
+  }
+}
+</style>
