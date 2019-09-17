@@ -11,7 +11,7 @@
     <li v-for="category in categories" :key="category.id" class="nav-item mr-1">
       <router-link
         class="nav-link px-3 py-1 my-1"
-        :class="{active: $route.query.categoryId === category.id}"
+        :class="{active: Number($route.query.categoryId) === category.id}"
         :to="{ name: 'restaurants', query: { categoryId: category.id } }"
       >{{ category.name }}</router-link>
     </li>
