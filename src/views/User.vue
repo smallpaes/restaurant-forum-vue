@@ -1,25 +1,29 @@
 <template>
-  <Spinner v-if="isLoading" />
-  <div v-else class="container py-3">
-    <div class="row">
-      <UserProfileCard
-        :profile="profile"
-        :initial-is-followed="isFollowed"
-        :currentUser="currentUser"
-        @handle-after-following="handleAfterFollowing"
-        @handle-after-unfollowing="handleAfterUnfollowing"
-      />
-      <section class="col-12 col-md-5">
-        <UserFollowingsCard :following-users="profile.Followings" />
-        <UserFollowersCard :followers="profile.Followers" />
-      </section>
+  <section>
+    <Spinner v-if="isLoading" />
+    <transition name="slide">
+      <div v-if="!isLoading" class="container py-3">
+        <div class="row">
+          <UserProfileCard
+            :profile="profile"
+            :initial-is-followed="isFollowed"
+            :currentUser="currentUser"
+            @handle-after-following="handleAfterFollowing"
+            @handle-after-unfollowing="handleAfterUnfollowing"
+          />
+          <section class="col-12 col-md-5">
+            <UserFollowingsCard :following-users="profile.Followings" />
+            <UserFollowersCard :followers="profile.Followers" />
+          </section>
 
-      <section class="col-12 col-md-7">
-        <UserCommentsCard :comments="profile.Comments" />
-        <UserFavoritedRestaurantsCard :favorite-restaurants="profile.FavoritedRestaurants" />
-      </section>
-    </div>
-  </div>
+          <section class="col-12 col-md-7">
+            <UserCommentsCard :comments="profile.Comments" />
+            <UserFavoritedRestaurantsCard :favorite-restaurants="profile.FavoritedRestaurants" />
+          </section>
+        </div>
+      </div>
+    </transition>
+  </section>
 </template>
 
 <script>

@@ -1,49 +1,56 @@
 <template>
   <div class="container py-3">
-    <NavTabs />
+    <transition enter-active-class="animated fadeIn" appear>
+      <!--NavTabs-->
+      <NavTabs />
+    </transition>
     <Spinner v-if="isLoading" />
-    <!--Show Top Restaurants-->
-    <div v-else v-for="restaurant in restaurants" :key="restaurant.id" class="card my-3 border-0">
-      <div class="row no-gutters">
-        <div class="image p-2">
-          <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">
-            <img class="w-100 rounded-sm" :src="restaurant.image" />
-          </router-link>
-        </div>
-        <div class="col flex-column d-flex justify-content-between">
-          <div class="card-body pb-0">
-            <h5 class="card-title m-0">{{restaurant.name}}</h5>
-            <small>
-              <i class="fas fa-bookmark"></i>
-              收藏數：{{restaurant.favoriteUser}}
-            </small>
-            <p class="card-text mb-0 mt-2 mt-lg-3 py-sm-2 py-md-1">{{restaurant.description}}</p>
-          </div>
-          <div
-            class="card-footer d-flex bg-white py-2 align-items-center justify-content-end border-0"
-          >
-            <router-link
-              :to="{name: 'restaurant', params: {id: restaurant.id}}"
-              class="btn btn-outline-secondary btn-sm mr-2 shadow-sm"
-            >Show</router-link>
+    <transition enter-active-class="animated fadeIn">
+      <!--Show Top Restaurants-->
+      <section v-if="!isLoading">
+        <div v-for="restaurant in restaurants" :key="restaurant.id" class="card my-3 border-0">
+          <div class="row no-gutters">
+            <div class="image p-2">
+              <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">
+                <img class="w-100 rounded-sm" :src="restaurant.image" />
+              </router-link>
+            </div>
+            <div class="col flex-column d-flex justify-content-between">
+              <div class="card-body pb-0">
+                <h5 class="card-title m-0">{{restaurant.name}}</h5>
+                <small>
+                  <i class="fas fa-bookmark"></i>
+                  收藏數：{{restaurant.favoriteUser}}
+                </small>
+                <p class="card-text mb-0 mt-2 mt-lg-3 py-sm-2 py-md-1">{{restaurant.description}}</p>
+              </div>
+              <div
+                class="card-footer d-flex bg-white py-2 align-items-center justify-content-end border-0"
+              >
+                <router-link
+                  :to="{name: 'restaurant', params: {id: restaurant.id}}"
+                  class="btn btn-outline-secondary btn-sm mr-2 shadow-sm"
+                >Show</router-link>
 
-            <button
-              v-if="restaurant.isFavorite"
-              @click.stop.prevent="deleteFavorite(restaurant.id)"
-              type="button"
-              class="btn btn-outline-secondary btn-sm shadow-sm"
-            >移除最愛</button>
-            <button
-              v-else
-              @click.stop.prevent="addFavorite(restaurant.id)"
-              type="button"
-              class="btn btn-outline-secondary btn-sm shadow-sm"
-            >加到最愛</button>
+                <button
+                  v-if="restaurant.isFavorite"
+                  @click.stop.prevent="deleteFavorite(restaurant.id)"
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm shadow-sm"
+                >移除最愛</button>
+                <button
+                  v-else
+                  @click.stop.prevent="addFavorite(restaurant.id)"
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm shadow-sm"
+                >加到最愛</button>
+              </div>
+            </div>
           </div>
+          <hr />
         </div>
-      </div>
-      <hr />
-    </div>
+      </section>
+    </transition>
   </div>
 </template>
 

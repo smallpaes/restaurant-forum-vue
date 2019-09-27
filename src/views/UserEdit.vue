@@ -1,41 +1,46 @@
 <template>
-  <div class="container py-5">
-    <form @submit.stop.prevent="handleSubmit">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input
-          id="name"
-          v-model="profile.name"
-          type="text"
-          name="name"
-          class="form-control"
-          placeholder="Enter Name"
-          required
-        />
-      </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-10 col-lg-8 offset-md-1 offset-lg-2">
+        <h2 class="pt-3">Edit Profile</h2>
+        <form @submit.stop.prevent="handleSubmit" class="py-3">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              id="name"
+              v-model="profile.name"
+              type="text"
+              name="name"
+              class="form-control"
+              placeholder="Enter Name"
+              required
+            />
+          </div>
 
-      <div class="form-group">
-        <label for="image">Image</label>
-        <img
-          v-if="profile.image"
-          :src="profile.image"
-          alt="Profile picture"
-          class="img-fluid d-block"
-          width="200"
-          height="200"
-        />
-        <input
-          id="image"
-          @change="handleFileChange"
-          type="file"
-          name="image"
-          accept="image/*"
-          class="form-control-file"
-        />
-      </div>
+          <div class="form-group">
+            <label for="image">Image</label>
+            <img
+              v-if="profile.image"
+              :src="profile.image"
+              alt="Profile picture"
+              class="img-fluid d-block"
+              width="200"
+              height="200"
+            />
+            <input
+              id="image"
+              @change="handleFileChange"
+              type="file"
+              name="image"
+              accept="image/*"
+              class="form-control-file"
+            />
+          </div>
 
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 

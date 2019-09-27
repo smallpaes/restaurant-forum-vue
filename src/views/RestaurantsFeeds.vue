@@ -1,18 +1,22 @@
 <template>
   <div class="container py-3">
-    <!--NavTabs-->
-    <NavTabs />
+    <transition enter-active-class="animated fadeIn" appear>
+      <!--NavTabs-->
+      <NavTabs />
+    </transition>
     <Spinner v-if="isLoading" />
-    <div v-else class="row">
-      <div class="col-lg-6">
-        <!-- 最新餐廳 NewestRestaurants -->
-        <NewestRestaurants :restaurants="restaurants" />
+    <transition name="slide">
+      <div v-if="!isLoading" class="row">
+        <div class="col-lg-6">
+          <!-- 最新餐廳 NewestRestaurants -->
+          <NewestRestaurants :restaurants="restaurants" />
+        </div>
+        <div class="col-lg-6">
+          <!-- 最新評論 NewestComments-->
+          <NewestComments :comments="comments" />
+        </div>
       </div>
-      <div class="col-lg-6">
-        <!-- 最新評論 NewestComments-->
-        <NewestComments :comments="comments" />
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 

@@ -1,31 +1,38 @@
 <template>
   <div class="container py-3">
-    <!--NavTabs-->
-    <NavTabs />
+    <transition enter-active-class="animated fadeIn" appear>
+      <!--NavTabs-->
+      <NavTabs />
+    </transition>
 
-    <!--RestaurantsNavPills-->
-    <RestaurantsNavsPills :categories="categories" />
+    <transition enter-active-class="animated fadeIn">
+      <!--RestaurantsNavPills-->
+      <RestaurantsNavsPills :categories="categories" v-if="!isLoading" />
+    </transition>
+
     <Spinner v-if="isLoading" />
-    <template v-else>
-      <!--Display Restaurants-->
-      <div class="row">
-        <!--ResaturantCard-->
-        <RestaurantCard
-          v-for="restaurant in restaurants"
-          :key="restaurant.id"
-          :initial-restaurant="restaurant"
+    <transition name="slide">
+      <section v-if="!isLoading">
+        <!--Display Restaurants-->
+        <div class="row">
+          <!--ResaturantCard-->
+          <RestaurantCard
+            v-for="restaurant in restaurants"
+            :key="restaurant.id"
+            :initial-restaurant="restaurant"
+          />
+        </div>
+        <!--RestaurantPagination-->
+        <RestaurantPagination
+          v-if="totalPage > 1"
+          :categoryId="categoryId"
+          :current-page="currentPage"
+          :total-page="totalPage"
         />
-      </div>
-      <!--RestaurantPagination-->
-      <RestaurantPagination
-        v-if="totalPage > 1"
-        :categoryId="categoryId"
-        :current-page="currentPage"
-        :total-page="totalPage"
-      />
 
-      <div v-if="restaurants.length < 1">此類別目前無餐廳資料</div>
-    </template>
+        <div v-if="restaurants.length < 1">此類別目前無餐廳資料</div>
+      </section>
+    </transition>
   </div>
 </template>
 

@@ -1,8 +1,22 @@
 <template>
   <div class="col-md-6 col-lg-4">
-    <Spinner v-if="isLoading" />
-    <div v-show="!isLoading" class="card mb-4 border-0 shadow-sm">
-      <img class="card-img-top" :src="restaurant.image" @load="changeLoading" alt="Card image cap" />
+    <div class="card mb-4 border-0 shadow-sm">
+      <div
+        class="card-header bg-white p-0 d-flex align-items-center justify-content-center"
+        v-if="isLoading"
+      >
+        <Spinner class="p-0" />
+      </div>
+
+      <transition enter-active-class="animated fadeIn">
+        <img
+          v-show="!isLoading"
+          class="card-img-top"
+          :src="restaurant.image"
+          @load="changeLoading"
+          alt="Card image cap"
+        />
+      </transition>
       <div class="card-body">
         <h5 class="card-title m-0">
           <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}">{{restaurant.name}}</router-link>
@@ -216,6 +230,30 @@ export default {
 @media screen and (min-width: 576px) {
   .card-body .card-text:last-of-type {
     min-height: 48px;
+  }
+}
+
+/*md size*/
+@media screen and (min-width: 768px) {
+  .card-header {
+    width: 330px;
+    height: 247.484px;
+  }
+}
+
+/*lg size*/
+@media screen and (min-width: 992px) {
+  .card-header {
+    width: 289.984px;
+    height: 217.484px;
+  }
+}
+
+/*xl size*/
+@media screen and (min-width: 1200px) {
+  .card-header {
+    width: 350px;
+    height: 262.484px;
   }
 }
 </style>

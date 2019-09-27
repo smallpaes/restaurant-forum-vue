@@ -1,37 +1,42 @@
 <template>
   <div class="container py-3">
-    <NavTabs />
+    <transition enter-active-class="animated fadeIn" appear>
+      <!--NavTabs-->
+      <NavTabs />
+    </transition>
     <Spinner v-if="isLoading" />
-    <div v-else class="row text-center mt-3">
-      <!--User Card-->
-      <div v-for="user in users" :key="user.id" class="col-12 col-md-6 col-lg-3 my-3">
-        <router-link :to="{name: 'user', params: {id: user.id}}">
-          <img :src="user.image | placeholderImage" class="rounded-circle img-thumbnail avatar" />
-        </router-link>
-        <h4 class="topic mb-0 mt-2">{{user.name}}</h4>
-        <p class="text-secondary d-block follower">追蹤人數：{{user.FollowerCount}}</p>
-        <p class="mt-2">
-          <router-link
-            v-if="currentUser.id === user.id"
-            :to="{name: 'user-edit', params: {id: user.id}}"
-            role="button"
-            class="btn red-btn btn-sm mt-0"
-          >編輯</router-link>
-          <button
-            v-else-if="user.isFollowed"
-            @click.stop.prevent="unfollow(user.id)"
-            type="button"
-            class="btn red-btn btn-sm mt-0"
-          >取消追蹤</button>
-          <button
-            v-else
-            @click.stop.prevent="follow(user.id)"
-            type="button"
-            class="btn red-btn btn-sm mt-0"
-          >追蹤</button>
-        </p>
+    <transition enter-active-class="animated fadeIn">
+      <div v-if="!isLoading" class="row text-center mt-3">
+        <!--User Card-->
+        <div v-for="user in users" :key="user.id" class="col-12 col-md-6 col-lg-3 my-3">
+          <router-link :to="{name: 'user', params: {id: user.id}}">
+            <img :src="user.image | placeholderImage" class="rounded-circle img-thumbnail avatar" />
+          </router-link>
+          <h4 class="topic mb-0 mt-2">{{user.name}}</h4>
+          <p class="text-secondary d-block follower">追蹤人數：{{user.FollowerCount}}</p>
+          <p class="mt-2">
+            <router-link
+              v-if="currentUser.id === user.id"
+              :to="{name: 'user-edit', params: {id: user.id}}"
+              role="button"
+              class="btn red-btn btn-sm mt-0"
+            >編輯</router-link>
+            <button
+              v-else-if="user.isFollowed"
+              @click.stop.prevent="unfollow(user.id)"
+              type="button"
+              class="btn red-btn btn-sm mt-0"
+            >取消追蹤</button>
+            <button
+              v-else
+              @click.stop.prevent="follow(user.id)"
+              type="button"
+              class="btn red-btn btn-sm mt-0"
+            >追蹤</button>
+          </p>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 

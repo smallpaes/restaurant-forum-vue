@@ -1,21 +1,26 @@
 <template>
   <div class="container py-3">
     <Spinner v-if="isLoading" />
-    <template v-else>
-      <!-- 餐廳資訊頁 RestaurantDetail -->
-      <RestaurantDetail :initial-restaurant="restaurant" />
-      <section class="row rounded-lg shadow-sm mt-3">
-        <div class="col-12 py-4">
-          <!-- 餐廳評論 RestaurantComments -->
-          <RestaurantComments
-            :restaurant-comments="restaurantComments"
-            @after-delete-comment="afterDeleteComment"
-          />
-          <!-- 新增評論 CreateComment -->
-          <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
-        </div>
+    <transition name="slide">
+      <section v-if="!isLoading">
+        <!-- 餐廳資訊頁 RestaurantDetail -->
+        <RestaurantDetail :initial-restaurant="restaurant" />
+        <section class="row rounded-lg shadow-sm mt-3">
+          <div class="col-12 py-4">
+            <!-- 餐廳評論 RestaurantComments -->
+            <RestaurantComments
+              :restaurant-comments="restaurantComments"
+              @after-delete-comment="afterDeleteComment"
+            />
+            <!-- 新增評論 CreateComment -->
+            <CreateComment
+              :restaurant-id="restaurant.id"
+              @after-create-comment="afterCreateComment"
+            />
+          </div>
+        </section>
       </section>
-    </template>
+    </transition>
   </div>
 </template>
 
