@@ -164,9 +164,9 @@ export default {
     };
   },
   methods: {
-    async fetchCategories() {
+    async fetchCategories(page = null) {
       try {
-        const { data, statusText } = await adminAPI.categories.get();
+        const { data, statusText } = await adminAPI.categories.get({ page });
         // error handling
         if (statusText !== "OK") {
           throw new Error(statusText);

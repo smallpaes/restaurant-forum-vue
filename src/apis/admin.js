@@ -3,7 +3,7 @@ import { apiHelper } from "../utils/helpers"
 export default {
   categories: {
     get({ page }) {
-      const searchParams = new URLSearchParams({ page })
+      const searchParams = page ? new URLSearchParams({ page }) : 'page='
       return apiHelper.get(`/admin/categories?${searchParams.toString()}`)
     },
     create({ name }) {
