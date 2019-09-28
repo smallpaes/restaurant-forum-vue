@@ -138,6 +138,11 @@ export default {
   color: #c22424;
 }
 
+.red-btn:hover .fa-star {
+  color: white;
+  transition: color 0.15s ease-in-out;
+}
+
 /*md size*/
 @media screen and (min-width: 768px) {
   /*display area  size*/
