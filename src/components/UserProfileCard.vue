@@ -46,19 +46,19 @@
       <div class="row bg-white shadow-sm rounded text-center text-secondary w-100 mx-0 h-100">
         <div class="col-6 px-3 py-4 d-flex flex-column justify-content-center">
           <h2 class="mb-2">{{profile.Comments.length}}</h2>
-          <p class="m-0">已追蹤用戶</p>
-        </div>
-        <div class="col-6 px-3 py-4 d-flex flex-column justify-content-center">
-          <h2 class="mb-2">{{profile.FavoritedRestaurants.length}}</h2>
-          <p class="m-0">用戶追蹤</p>
-        </div>
-        <div class="col-6 px-3 py-4 d-flex flex-column justify-content-center">
-          <h2 class="mb-2">{{profile.Followings.length}}</h2>
           <p class="m-0">已評論餐廳</p>
         </div>
         <div class="col-6 px-3 py-4 d-flex flex-column justify-content-center">
-          <h2 class="mb-2">{{profile.Followers.length}}</h2>
+          <h2 class="mb-2">{{profile.FavoritedRestaurants.length}}</h2>
           <p class="m-0">收藏的餐廳</p>
+        </div>
+        <div class="col-6 px-3 py-4 d-flex flex-column justify-content-center">
+          <h2 class="mb-2">{{profile.Followings.length}}</h2>
+          <p class="m-0">已追蹤用戶</p>
+        </div>
+        <div class="col-6 px-3 py-4 d-flex flex-column justify-content-center">
+          <h2 class="mb-2">{{profile.Followers.length}}</h2>
+          <p class="m-0">用戶追蹤</p>
         </div>
       </div>
     </section>
