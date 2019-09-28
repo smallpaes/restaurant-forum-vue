@@ -2,47 +2,57 @@
   <div class="container py-3">
     <AdminNav />
     <Spinner v-if="isLoading" />
-    <table v-else class="table">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Email</th>
-          <th scope="col">Role</th>
-          <th scope="col" width="140">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <th scope="row" class="py-3">{{user.id}}</th>
-          <td class="py-3">{{user.email}}</td>
-          <td class="py-3" v-if="user.isAdmin">admin</td>
-          <td class="py-3" v-else>user</td>
-          <td>
-            <template v-if="currentUser.id !== user.id">
-              <button
-                v-if="user.isAdmin"
-                @click.stop.prevent="toggleUserRole(user.id)"
-                type="button"
-                class="btn btn-link pl-0"
-              >set as user</button>
-              <button
-                v-else
-                @click.stop.prevent="toggleUserRole(user.id)"
-                type="button"
-                class="btn btn-link pl-0"
-              >set as admin</button>
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!--Pagination-->
-    <AdminPanelPagination
-      v-if="totalPage > 1"
-      :total-page="totalPage"
-      :current-page="currentPage"
-      :admin-panel="adminPanel"
-    />
+    <transition name="slide">
+      <section v-if="!isLoading">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col" width="140">Action</th>
+            </tr>
+          </thead>
+          <transition-group name="fade-up" tag="tbody">
+            <tr v-for="user in users" :key="user.id">
+              <th scope="row" class="py-3">{{user.id}}</th>
+              <td class="py-3">{{user.email}}</td>
+              <transition name="fade" mode="out-in">
+                <td class="py-3" v-if="user.isAdmin" :key="admin">admin</td>
+                <td class="py-3" v-else :key="user">user</td>
+              </transition>
+              <td>
+                <template v-if="currentUser.id !== user.id">
+                  <transition name="fade" mode="out-in">
+                    <button
+                      v-if="user.isAdmin"
+                      @click.stop.prevent="toggleUserRole(user.id)"
+                      type="button"
+                      class="btn btn-link pl-0"
+                      :key="user"
+                    >set as user</button>
+                    <button
+                      v-else
+                      @click.stop.prevent="toggleUserRole(user.id)"
+                      type="button"
+                      class="btn btn-link pl-0"
+                      :key="admins"
+                    >set as admin</button>
+                  </transition>
+                </template>
+              </td>
+            </tr>
+          </transition-group>
+        </table>
+        <!--Pagination-->
+        <AdminPanelPagination
+          v-if="totalPage > 1"
+          :total-page="totalPage"
+          :current-page="currentPage"
+          :admin-panel="adminPanel"
+        />
+      </section>
+    </transition>
   </div>
 </template>
 

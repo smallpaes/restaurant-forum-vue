@@ -8,15 +8,19 @@
       class="btn red-btn mb-4 text-right"
     >New Restaurant</router-link>
     <Spinner v-if="isLoading" />
-    <!-- 後台餐廳列表 AdminRestaurantsTable -->
-    <AdminRestaurantsTable :initial-restaurants="restaurants" v-else />
-    <!--Pagination-->
-    <AdminPanelPagination
-      v-if="totalPage > 1"
-      :current-page="currentPage"
-      :total-page="totalPage"
-      :admin-panel="adminPanel"
-    />
+    <transition name="slide">
+      <section v-if="!isLoading">
+        <!-- 後台餐廳列表 AdminRestaurantsTable -->
+        <AdminRestaurantsTable :initial-restaurants="restaurants" />
+        <!--Pagination-->
+        <AdminPanelPagination
+          v-if="totalPage > 1"
+          :current-page="currentPage"
+          :total-page="totalPage"
+          :admin-panel="adminPanel"
+        />
+      </section>
+    </transition>
   </div>
 </template>
 

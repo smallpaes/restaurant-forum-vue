@@ -8,12 +8,12 @@
         <th scope="col" width="300">操作</th>
       </tr>
     </thead>
-    <tbody>
+    <transition-group name="fade-up" tag="tbody">
       <tr v-for="restaurant in restaurants" :key="restaurant.id">
         <th scope="row" class="pt-3">{{ restaurant.id }}</th>
         <td class="pt-3">{{ restaurant.Category && restaurant.Category.name }}</td>
         <td class="pt-3">{{ restaurant.name }}</td>
-        <td class="d-flex justify-content-start actions">
+        <td>
           <router-link
             :to="{name: 'admin-restaurant', params: {id: restaurant.id}}"
             class="btn btn-link pr-4"
@@ -31,7 +31,7 @@
           >Delete</button>
         </td>
       </tr>
-    </tbody>
+    </transition-group>
   </table>
 </template>
 

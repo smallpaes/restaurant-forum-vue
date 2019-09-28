@@ -1,40 +1,44 @@
 <template>
   <div class="container py-5">
     <Spinner v-if="isLoading" />
-    <div v-else class="row">
-      <div class="col-md-12">
-        <h1>{{ restaurant.name }}</h1>
-        <p>[{{ restaurant.categoryName }}]</p>
-      </div>
-      <div class="col-md-4">
-        <img
-          class="img-responsive center-block"
-          :src="restaurant.image | placeholderImage"
-          style="width: 250px;margin-bottom: 25px;"
-        />
-        <div class="well">
-          <ul class="list-unstyled">
-            <li>
-              <strong>Opening Hour:</strong>
-              {{ restaurant.openingHours }}
-            </li>
-            <li>
-              <strong>Tel:</strong>
-              {{ restaurant.tel }}
-            </li>
-            <li>
-              <strong>Address:</strong>
-              {{ restaurant.address }}
-            </li>
-          </ul>
+    <transition name="fade">
+      <div v-if="!isLoading" class="row">
+        <div class="col-md-12">
+          <h1>{{ restaurant.name }}</h1>
+          <p>[{{ restaurant.categoryName }}]</p>
+        </div>
+        <div class="col-md-4">
+          <img
+            class="img-responsive center-block"
+            :src="restaurant.image | placeholderImage"
+            style="width: 250px;margin-bottom: 25px;"
+          />
+          <div class="well">
+            <ul class="list-unstyled">
+              <li>
+                <strong>Opening Hour:</strong>
+                {{ restaurant.openingHours }}
+              </li>
+              <li>
+                <strong>Tel:</strong>
+                {{ restaurant.tel }}
+              </li>
+              <li>
+                <strong>Address:</strong>
+                {{ restaurant.address }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <p>{{ restaurant.description }}</p>
         </div>
       </div>
-      <div class="col-md-8">
-        <p>{{ restaurant.description }}</p>
-      </div>
-    </div>
+    </transition>
     <hr />
-    <a href="#" @click="$router.back()">回上一頁</a>
+    <transition name="fade" appear>
+      <a href="#" @click="$router.back()">回上一頁</a>
+    </transition>
   </div>
 </template>
 

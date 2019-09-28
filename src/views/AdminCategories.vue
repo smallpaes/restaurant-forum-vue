@@ -2,81 +2,92 @@
   <div class="container py-3">
     <AdminNav />
     <Spinner v-if="isLoading" />
-    <template v-else>
-      <form class="mt-3 mb-4">
-        <div class="form-row">
-          <div class="col-auto">
-            <input
-              v-model="newCategoryName"
-              type="text"
-              class="add-input"
-              placeholder="新增餐廳類別..."
-              required
-            />
-            <button
-              @click.stop.prevent="createCategory"
-              :disabled="isProcessing"
-              type="button"
-              class="btn red-btn px-3"
-            >新增</button>
-          </div>
-        </div>
-      </form>
-      <!--Category List Dsiplay-->
-      <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col" width="60">#</th>
-            <th scope="col">Category Name</th>
-            <th scope="col" width="210">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="category in categories" :key="category.id">
-            <th scope="row" class="pt-3">{{ category.id }}</th>
-            <td class="position-relative">
-              <div v-show="!category.isEditing" class="category-name">{{ category.name }}</div>
+    <section>
+      <transition enter-active-class="animated fadeIn">
+        <form class="mt-3 mb-4" v-if="!isLoading">
+          <div class="form-row">
+            <div class="col-auto">
               <input
+                v-model="newCategoryName"
                 type="text"
-                v-show="category.isEditing"
-                class="form-control"
-                v-model="category.name"
+                class="add-input"
+                placeholder="新增餐廳類別..."
+                required
               />
-              <span v-show="category.isEditing" @click="handleCancel(category.id)" class="cancel">X</span>
-            </td>
-            <td class="d-flex justify-content-start">
               <button
-                v-show="!category.isEditing"
-                @click.stop.prevent="toggleIsEditing(category.id)"
-                :disabled="category.isProcessing"
+                @click.stop.prevent="createCategory"
+                :disabled="isProcessing"
                 type="button"
-                class="btn btn-link mr-2"
-              >Edit</button>
-              <button
-                v-show="category.isEditing"
-                @click.stop.prevent="updateCategory({categoryId: category.id, name: category.name})"
-                :disabled="category.isProcessing"
-                type="button"
-                class="btn btn-link mr-2"
-              >Save</button>
-              <button
-                @click.stop.prevent="deleteCategory(category.id)"
-                :disabled="category.isProcessing"
-                type="button"
-                class="btn btn-link mr-2"
-              >Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <!--Pagination-->
-      <AdminPanelPagination
-        v-if="totalPage > 1"
-        :total-page="totalPage"
-        :current-page="currentPage"
-        :admin-panel="adminPanel"
-      />
-    </template>
+                class="btn red-btn px-3"
+              >新增</button>
+            </div>
+          </div>
+        </form>
+      </transition>
+
+      <transition name="slide">
+        <section v-if="!isLoading">
+          <!--Category List Dsiplay-->
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col" width="60">#</th>
+                <th scope="col">Category Name</th>
+                <th scope="col" width="210">Action</th>
+              </tr>
+            </thead>
+            <transition-group name="fade-up" tag="tbody">
+              <tr v-for="category in categories" :key="category.id">
+                <th scope="row" class="pt-3">{{ category.id }}</th>
+                <td class="position-relative">
+                  <div v-show="!category.isEditing" class="category-name">{{ category.name }}</div>
+                  <input
+                    type="text"
+                    v-show="category.isEditing"
+                    class="form-control"
+                    v-model="category.name"
+                  />
+                  <span
+                    v-show="category.isEditing"
+                    @click="handleCancel(category.id)"
+                    class="cancel"
+                  >X</span>
+                </td>
+                <td class="d-flex justify-content-start">
+                  <button
+                    v-show="!category.isEditing"
+                    @click.stop.prevent="toggleIsEditing(category.id)"
+                    :disabled="category.isProcessing"
+                    type="button"
+                    class="btn btn-link mr-2"
+                  >Edit</button>
+                  <button
+                    v-show="category.isEditing"
+                    @click.stop.prevent="updateCategory({categoryId: category.id, name: category.name})"
+                    :disabled="category.isProcessing"
+                    type="button"
+                    class="btn btn-link mr-2"
+                  >Save</button>
+                  <button
+                    @click.stop.prevent="deleteCategory(category.id)"
+                    :disabled="category.isProcessing"
+                    type="button"
+                    class="btn btn-link mr-2"
+                  >Delete</button>
+                </td>
+              </tr>
+            </transition-group>
+          </table>
+          <!--Pagination-->
+          <AdminPanelPagination
+            v-if="totalPage > 1"
+            :total-page="totalPage"
+            :current-page="currentPage"
+            :admin-panel="adminPanel"
+          />
+        </section>
+      </transition>
+    </section>
   </div>
 </template>
 
