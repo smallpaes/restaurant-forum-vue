@@ -53,10 +53,7 @@ export default {
   },
   watch: {
     initialRestaurants(restaurants) {
-      this.restaurants = {
-        ...this.restaurants,
-        ...restaurants
-      };
+      this.restaurants = [...restaurants];
     }
   },
   methods: {
